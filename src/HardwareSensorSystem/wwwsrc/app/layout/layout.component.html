@@ -1,3 +1,13 @@
-<p>
-  layout works!
-</p>
+<md-sidenav-container>
+  <md-sidenav mode="side" opened="true">
+    <md-nav-list>
+      <md-list-item [routerLink]="['/charts']">Charts</md-list-item>
+      <md-list-item [routerLink]="['/devices']">Devices</md-list-item>
+      <md-list-item [routerLink]="['/logout']">Abmelden</md-list-item>
+    </md-nav-list>
+  </md-sidenav>
+  <md-toolbar color="primary">App</md-toolbar>
+  <div class="content">
+    <router-outlet></router-outlet>
+  </div>
+</md-sidenav-container>
