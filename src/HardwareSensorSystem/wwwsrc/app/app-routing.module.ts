@@ -12,12 +12,9 @@ const routes: Routes = [
   { path: 'logout', component: LogoutComponent },
   {
     path: '', component: LayoutComponent, children: [
-      {
-        path: 'charts', loadChildren: './chart/chart.module#ChartModule'
-      },
-      {
-        path: 'devices', loadChildren: './device/device.module#DeviceModule'
-      }
+      { path: 'charts', loadChildren: './chart/chart.module#ChartModule' },
+      { path: 'devices', loadChildren: './device/device.module#DeviceModule' },
+      { path: 'roles', loadChildren: './user/user.module#UserModule' }
     ]
   }
 ];
