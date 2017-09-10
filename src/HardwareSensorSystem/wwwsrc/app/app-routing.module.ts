@@ -13,14 +13,10 @@ const routes: Routes = [
   {
     path: '', component: LayoutComponent, children: [
       {
-        path: 'charts', children: [
-          { path: '', component: ChartListComponent }
-        ]
+        path: 'charts', loadChildren: './chart/chart.module#ChartModule'
       },
       {
-        path: 'devices', children: [
-          { path: '', component: DeviceListComponent }
-        ]
+        path: 'devices', loadChildren: './device/device.module#DeviceModule'
       }
     ]
   }

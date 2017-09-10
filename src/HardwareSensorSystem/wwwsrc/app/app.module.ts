@@ -19,9 +19,6 @@ import { LoginComponent } from './login/login.component';
 import { LogoutComponent } from './logout/logout.component';
 import { LayoutComponent } from './layout/layout.component';
 
-import { ChartModule } from './chart/chart.module';
-import { DeviceModule } from './device/device.module';
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -40,9 +37,7 @@ import { DeviceModule } from './device/device.module';
     MdButtonModule,
     MdInputModule,
     MdCardModule,
-    MdListModule,
-    ChartModule,
-    DeviceModule
+    MdListModule
   ],
   providers: [],
   bootstrap: [AppComponent]
