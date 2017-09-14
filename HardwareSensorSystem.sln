@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.10
+VisualStudioVersion = 15.0.26730.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EA3CBF6C-171A-4F60-BCB2-8DCF102DD655}"
 EndProject
@@ -15,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HardwareSensorSystem.Security", "src\HardwareSensorSystem.Security\HardwareSensorSystem.Security.csproj", "{F9C1FC83-886F-4038-9D28-AF2DD012DD34}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,12 +27,17 @@ Global
 		{5DDA2398-B555-4C44-93B8-F074D77A4F8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5DDA2398-B555-4C44-93B8-F074D77A4F8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5DDA2398-B555-4C44-93B8-F074D77A4F8B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9C1FC83-886F-4038-9D28-AF2DD012DD34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9C1FC83-886F-4038-9D28-AF2DD012DD34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9C1FC83-886F-4038-9D28-AF2DD012DD34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9C1FC83-886F-4038-9D28-AF2DD012DD34}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{5DDA2398-B555-4C44-93B8-F074D77A4F8B} = {EA3CBF6C-171A-4F60-BCB2-8DCF102DD655}
+		{F9C1FC83-886F-4038-9D28-AF2DD012DD34} = {EA3CBF6C-171A-4F60-BCB2-8DCF102DD655}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0458592A-C48C-4FC4-87EC-2506365A320F}
