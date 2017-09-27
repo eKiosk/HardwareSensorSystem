@@ -1,24 +1,44 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HardwareSensorSystem
 {
     public class Startup
     {
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-        public void ConfigureServices(IServiceCollection services)
+        private readonly IConfiguration _configuration;
+
+        public Startup()
         {
-            services.AddSecuriy();
+            _configuration = new ConfigurationBuilder()
+                .AddEnvironmentVariables()
+                .Build();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// <summary>
+        /// This method add services to the container.
+        /// </summary>
+        /// <param name="services">Contract for a collection of service descriptors.</param>
+        public void ConfigureServices(IServiceCollection services)
+        {
+            var connectionString = _configuration.GetValue<string>("DATABASE");
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                connectionString = "Server=localhost;Database=tempdb;User Id=sa;Password=msSql_password;";
+            }
+            services.AddSecuriy(options =>
+            {
+                options.UseSqlServer(connectionString, b => b.MigrationsAssembly("HardwareSensorSystem"));
+            });
+        }
+
+        /// <summary>
+        /// This method configure the HTTP request pipeline.
+        /// </summary>
+        /// <param name="app">Class that provides the mechanisms to configure an application's request pipeline.</param>
+        /// <param name="env">Information about the web hosting environment.</param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
