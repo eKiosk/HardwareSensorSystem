@@ -171,6 +171,9 @@ csx/
 ecf/
 rcf/
 
+# Entity Framework Core
+Migrations/
+
 # Windows Store app package directories and files
 AppPackages/
 BundleArtifacts/
