@@ -25,7 +25,7 @@
     <ProjectReference Include="..\HardwareSensorSystem.Security\HardwareSensorSystem.Security.csproj" />
   </ItemGroup>
 
-  <Target Name="Build Angular" BeforeTargets="Build">
+  <Target Name="Build Angular" BeforeTargets="Build" Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <Message Text="* * * * * Install Dependencies * * * * *" Importance="high" />
     <Exec command="npm install" />
     <Message Text="* * * * * Building Angular App * * * * *" Importance="high" />
