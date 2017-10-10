@@ -10,11 +10,9 @@ namespace HardwareSensorSystem
     {
         private readonly IConfiguration _configuration;
 
-        public Startup()
+        public Startup(IConfiguration configuration)
         {
-            _configuration = new ConfigurationBuilder()
-                .AddEnvironmentVariables()
-                .Build();
+            _configuration = configuration;
         }
 
         /// <summary>
