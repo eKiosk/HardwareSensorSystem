@@ -20,6 +20,21 @@ namespace HardwareSensorSystem.Security
             };
         }
 
+        public static IEnumerable<ApplicationPermission> GetPermissions()
+        {
+            return new List<ApplicationPermission>
+            {
+                new ApplicationPermission
+                {
+                    Name = "devices"
+                },
+                new ApplicationPermission
+                {
+                    Name = "users"
+                }
+            };
+        }
+
         public static IEnumerable<ConfigApplicationUser> GetUsers()
         {
             return new List<ConfigApplicationUser>

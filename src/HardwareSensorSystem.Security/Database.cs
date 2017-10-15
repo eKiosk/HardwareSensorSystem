@@ -22,6 +22,16 @@ namespace HardwareSensorSystem.Security
                 configurationDbContext.SaveChanges();
             }
 
+            var applicationDbContext = services.GetRequiredService<ApplicationDbContext>();
+            if (!applicationDbContext.Permissions.Any())
+            {
+                foreach (var permission in Config.GetPermissions())
+                {
+                    applicationDbContext.Permissions.Add(permission);
+                }
+                applicationDbContext.SaveChanges();
+            }
+
             var roleManager = services.GetRequiredService<RoleManager<ApplicationRole>>();
             if (!roleManager.Roles.Any())
             {
