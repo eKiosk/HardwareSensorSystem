@@ -1,6 +1,7 @@
 ﻿using HardwareSensorSystem.Security.Models;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -10,14 +11,13 @@ namespace Microsoft.AspNetCore.Builder
 {
     public static class SecurityServiceCollectionExtensions
     {
-        public static void AddSecuriy(this IServiceCollection services, Action<DbContextOptionsBuilder> dbContextOptionsAction)
+        public static void AddSecuriy(this IServiceCollection services, IConfiguration configuration, Action<DbContextOptionsBuilder> dbContextOptionsAction)
         {
             services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                 .AddIdentityServerAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme, options =>
                     {
-                        options.Authority = "";
+                        options.Authority = configuration.GetValue<string>("AUTHORITY");
                         options.RequireHttpsMetadata = false;
-                        options.AllowedScopes.Add("offline_access");
                         options.SupportedTokens = SupportedTokens.Jwt;
                     });
 

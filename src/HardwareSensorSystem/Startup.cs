@@ -21,14 +21,9 @@ namespace HardwareSensorSystem
         /// <param name="services">Contract for a collection of service descriptors.</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            var connectionString = _configuration.GetValue<string>("DATABASE");
-            if (string.IsNullOrEmpty(connectionString))
+            services.AddSecuriy(_configuration, options =>
             {
-                connectionString = "Server=localhost;Database=tempdb;User Id=sa;Password=msSql_password;";
-            }
-            services.AddSecuriy(options =>
-            {
-                options.UseSqlServer(connectionString, b => b.MigrationsAssembly("HardwareSensorSystem"));
+                options.UseSqlServer(_configuration.GetValue<string>("DATABASE"), b => b.MigrationsAssembly("HardwareSensorSystem"));
             });
         }
 
