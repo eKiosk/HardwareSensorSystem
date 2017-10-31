@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import {
-  MdButtonModule,
-  MdCardModule,
-  MdInputModule,
-  MdListModule,
-  MdSidenavModule,
-  MdToolbarModule,
+  MatButtonModule,
+  MatCardModule,
+  MatInputModule,
+  MatListModule,
+  MatSidenavModule,
+  MatToolbarModule,
 } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -14,22 +14,22 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
   imports: [
     BrowserAnimationsModule,
     FlexLayoutModule,
-    MdSidenavModule,
-    MdToolbarModule,
-    MdButtonModule,
-    MdInputModule,
-    MdCardModule,
-    MdListModule
+    MatSidenavModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatInputModule,
+    MatCardModule,
+    MatListModule
   ],
   exports: [
     BrowserAnimationsModule,
     FlexLayoutModule,
-    MdSidenavModule,
-    MdToolbarModule,
-    MdButtonModule,
-    MdInputModule,
-    MdCardModule,
-    MdListModule
+    MatSidenavModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatInputModule,
+    MatCardModule,
+    MatListModule
   ]
 })
 export class UiComponentsModule { }

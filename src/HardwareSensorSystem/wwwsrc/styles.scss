@@ -10,7 +10,7 @@ $app-theme: mat-dark-theme($app-primary, $app-accent, $app-warn);
 
 @include angular-material-theme($app-theme);
 
-html, body, md-sidenav-container {
+html, body, mat-sidenav-container {
   margin: 0;
   height: 100%;
 }
