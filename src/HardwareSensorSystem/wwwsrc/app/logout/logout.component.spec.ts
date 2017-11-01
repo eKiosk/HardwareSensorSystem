@@ -1,21 +1,27 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
 
 import { LogoutComponent } from './logout.component';
+
+const routerStub = {
+  navigate: (commands: any[]) => { }
+};
 
 describe('LogoutComponent', () => {
   let component: LogoutComponent;
   let fixture: ComponentFixture<LogoutComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule
-      ],
-      declarations: [ LogoutComponent ]
-    })
-    .compileComponents();
-  }));
+      declarations: [LogoutComponent],
+      providers: [
+        {
+          provide: Router,
+          useValue: routerStub
+        }
+      ]
+    });
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(LogoutComponent);
