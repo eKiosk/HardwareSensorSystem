@@ -1,16 +1,24 @@
-﻿using HardwareSensorSystem.Security.ViewModels;
+﻿using HardwareSensorSystem.Security.Models;
+using HardwareSensorSystem.Security.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace HardwareSensorSystem.Security.Controllers
 {
     public class PermissionController : Controller
     {
-        public async Task<IActionResult> GetAll()
+        private ApplicationDbContext _context;
+
+        public PermissionController(ApplicationDbContext context)
         {
-            var permissions = new List<PermissionViewModel>();
-            return Ok(permissions);
+            _context = context;
+        }
+
+        public Task<IActionResult> GetAll()
+        {
+            var permissions = _context.Permissions.Select(p => p.ToViewModel());
+            return Task.FromResult<IActionResult>(Ok(permissions));
         }
     }
 }
