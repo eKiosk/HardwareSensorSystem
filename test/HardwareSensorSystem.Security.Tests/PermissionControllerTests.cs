@@ -53,7 +53,7 @@ namespace HardwareSensorSystem.Security.Tests
         }
 
         [Fact]
-        public async Task GetAll_Call_ReturnCollectionOfPermissions()
+        public async Task GetAll_Call_ReturnCollectionOfPermissionsFromDatabase()
         {
             // Arrange
             var controller = new PermissionController(_context);
