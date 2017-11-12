@@ -11,7 +11,7 @@ namespace HardwareSensorSystem.Security.ViewModels
     public static class PermissionViewModelExtensions
     {
         /// <summary>
-        /// Convert a <see cref="ApplicationPermission"/> to its view model.
+        /// Convert an <see cref="ApplicationPermission"/> to its view model.
         /// </summary>
         /// <param name="appPermission">The permission.</param>
         /// <returns>A view model of the permission.</returns>

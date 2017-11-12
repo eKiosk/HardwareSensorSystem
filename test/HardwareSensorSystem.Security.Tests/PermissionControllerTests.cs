@@ -28,18 +28,18 @@ namespace HardwareSensorSystem.Security.Tests
             {
                 new ApplicationPermission()
                 {
-                    Id=1,
-                    Name="Admin"
+                    Id = 1,
+                    Name = "Read"
                 },
                 new ApplicationPermission()
                 {
-                    Id=2,
-                    Name="User"
+                    Id = 2,
+                    Name = "Write"
                 },
                 new ApplicationPermission()
                 {
-                    Id=3,
-                    Name="Demo"
+                    Id = 3,
+                    Name = "Delete"
                 }
             };
 
@@ -53,7 +53,7 @@ namespace HardwareSensorSystem.Security.Tests
         }
 
         [Fact]
-        public async Task GetAll_Call_ReturnCollectionOfPermissionsFromDatabase()
+        public async Task GetAll_WhenCalled_ReturnsCollectionOfPermissionsFromDatabase()
         {
             // Arrange
             var controller = new PermissionController(_context);
