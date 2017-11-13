@@ -3,7 +3,7 @@
 namespace HardwareSensorSystem.Security.ViewModels
 {
     /// <summary>
-    /// View model of permission.
+    /// View model of role.
     /// </summary>
     public class RoleViewModel
     {

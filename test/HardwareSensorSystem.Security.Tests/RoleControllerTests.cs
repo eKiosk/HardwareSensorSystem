@@ -36,7 +36,7 @@ namespace HardwareSensorSystem.Security.Tests
             var roles = Assert.IsAssignableFrom<IEnumerable<RoleViewModel>>(okObjectResult.Value);
             Assert.All(testRoles, testRole =>
             {
-                var role = roles.SingleOrDefault(p => p.Id == testRole.Id);
+                var role = roles.SingleOrDefault(r => r.Id == testRole.Id);
                 Assert.NotNull(role);
                 Assert.Equal(testRole.Name, role.Name);
             });
