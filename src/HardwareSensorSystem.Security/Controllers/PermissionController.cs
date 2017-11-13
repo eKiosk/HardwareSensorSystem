@@ -1,6 +1,7 @@
 ﻿using HardwareSensorSystem.Security.Models;
 using HardwareSensorSystem.Security.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,10 +16,10 @@ namespace HardwareSensorSystem.Security.Controllers
             _context = context;
         }
 
-        public Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var permissions = _context.Permissions.Select(p => p.ToViewModel());
-            return Task.FromResult<IActionResult>(Ok(permissions));
+            var permissions = await _context.Permissions.Select(p => p.ToViewModel()).ToListAsync();
+            return Ok(permissions);
         }
     }
 }
