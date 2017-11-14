@@ -2,6 +2,7 @@
 using HardwareSensorSystem.Security.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,10 +17,10 @@ namespace HardwareSensorSystem.Security.Controllers
             _roleManager = roleManager;
         }
 
-        public Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var roles = _roleManager.Roles.Select(r => r.ToViewModel());
-            return Task.FromResult<IActionResult>(Ok(roles));
+            var roles = await _roleManager.Roles.Select(r => r.ToViewModel()).ToListAsync();
+            return Ok(roles);
         }
     }
 }

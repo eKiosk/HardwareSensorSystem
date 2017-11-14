@@ -11,20 +11,35 @@ using Xunit;
 
 namespace HardwareSensorSystem.Security.Tests
 {
-    public class PermissionControllerTests : IDisposable
+    public class PermissionControllerTests
     {
-        private ApplicationDbContext _context;
-        private IEnumerable<ApplicationPermission> _permissions;
-
-        public PermissionControllerTests()
+        [Fact]
+        public async Task GetAll_WhenCalled_ReturnsCollectionOfPermissionsFromDatabase()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options;
+            // Arrange
+            var testPermissions = GetPermissions();
+            var dbContext = GetDbContext();
+            dbContext.Permissions.AddRange(testPermissions);
+            dbContext.SaveChanges();
+            var controller = new PermissionController(dbContext);
 
-            _context = new ApplicationDbContext(options);
+            // Act
+            var result = await controller.GetAll();
 
-            _permissions = new List<ApplicationPermission>()
+            // Assert
+            var okObjectResult = Assert.IsType<OkObjectResult>(result);
+            var permissions = Assert.IsAssignableFrom<IEnumerable<PermissionViewModel>>(okObjectResult.Value);
+            Assert.All(testPermissions, testPermission =>
+            {
+                var permission = permissions.SingleOrDefault(p => p.Id == testPermission.Id);
+                Assert.NotNull(permission);
+                Assert.Equal(testPermission.Name, permission.Name);
+            });
+        }
+
+        private static IEnumerable<ApplicationPermission> GetPermissions()
+        {
+            return new List<ApplicationPermission>()
             {
                 new ApplicationPermission()
                 {
@@ -42,34 +57,15 @@ namespace HardwareSensorSystem.Security.Tests
                     Name = "Delete"
                 }
             };
-
-            _context.Permissions.AddRange(_permissions);
-            _context.SaveChanges();
         }
 
-        public void Dispose()
+        private static ApplicationDbContext GetDbContext()
         {
-            _context.Dispose();
-        }
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .Options;
 
-        [Fact]
-        public async Task GetAll_WhenCalled_ReturnsCollectionOfPermissionsFromDatabase()
-        {
-            // Arrange
-            var controller = new PermissionController(_context);
-
-            // Act
-            var result = await controller.GetAll();
-
-            // Assert
-            var okObjectResult = Assert.IsType<OkObjectResult>(result);
-            var permissions = Assert.IsAssignableFrom<IEnumerable<PermissionViewModel>>(okObjectResult.Value);
-            Assert.All(_permissions, _permission =>
-            {
-                var permission = permissions.SingleOrDefault(p => p.Id == _permission.Id);
-                Assert.NotNull(permission);
-                Assert.Equal(_permission.Name, permission.Name);
-            });
+            return new ApplicationDbContext(options);
         }
     }
 }
