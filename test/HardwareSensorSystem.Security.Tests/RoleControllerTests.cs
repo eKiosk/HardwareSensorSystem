@@ -51,7 +51,7 @@ namespace HardwareSensorSystem.Security.Tests
             mockRoleManager.Setup(roleManager => roleManager.CreateAsync(It.IsAny<ApplicationRole>())).ReturnsAsync((ApplicationRole appRole) =>
             {
                 appRole.Id = 1;
-                return new IdentityResult();
+                return IdentityResult.Success;
             }).Verifiable();
             var roleName = "RoleName";
 
@@ -81,6 +81,23 @@ namespace HardwareSensorSystem.Security.Tests
             mockRoleManager.Verify(roleManager => roleManager.CreateAsync(It.IsAny<ApplicationRole>()), Times.Never());
             var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
             Assert.IsType<SerializableError>(badRequestObjectResult.Value);
+        }
+
+        [Fact]
+        public async Task Create_WithUnprocessableRole_ReturnsCollectionOfIdentityErrors()
+        {
+            // Arrange
+            var mockRoleManager = GetRoleManagerMock();
+            var controller = new RoleController(mockRoleManager.Object);
+            mockRoleManager.Setup(roleManager => roleManager.CreateAsync(It.IsAny<ApplicationRole>())).ReturnsAsync(IdentityResult.Failed()).Verifiable();
+
+            // Act
+            var result = await controller.Create(new RoleViewModel());
+
+            // Assert
+            mockRoleManager.Verify();
+            var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.IsAssignableFrom<IEnumerable<IdentityError>>(badRequestObjectResult.Value);
         }
 
         private static IEnumerable<ApplicationRole> GetRoles()

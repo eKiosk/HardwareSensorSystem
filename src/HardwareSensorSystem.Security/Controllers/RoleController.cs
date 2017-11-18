@@ -35,7 +35,12 @@ namespace HardwareSensorSystem.Security.Controllers
                 Name = role.Name
             };
 
-            await _roleManager.CreateAsync(dbRole);
+            var identityResult = await _roleManager.CreateAsync(dbRole);
+            if (!identityResult.Succeeded)
+            {
+                return BadRequest(identityResult.Errors);
+            }
+
             return Ok(dbRole.ToViewModel());
         }
     }
