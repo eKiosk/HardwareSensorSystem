@@ -22,5 +22,16 @@ namespace HardwareSensorSystem.Security.Controllers
             var roles = await _roleManager.Roles.Select(r => r.ToViewModel()).ToListAsync();
             return Ok(roles);
         }
+
+        public async Task<IActionResult> Create(RoleViewModel role)
+        {
+            var dbRole = new ApplicationRole()
+            {
+                Name = role.Name
+            };
+
+            await _roleManager.CreateAsync(dbRole);
+            return Ok(dbRole.ToViewModel());
+        }
     }
 }

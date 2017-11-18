@@ -42,6 +42,29 @@ namespace HardwareSensorSystem.Security.Tests
             });
         }
 
+        [Fact]
+        public async Task Create_ValidRole_ReturnCreatedRole()
+        {
+            // Arrange
+            var mockRoleManager = GetRoleManagerMock();
+            var controller = new RoleController(mockRoleManager.Object);
+            mockRoleManager.Setup(roleManager => roleManager.CreateAsync(It.IsAny<ApplicationRole>())).ReturnsAsync((ApplicationRole appRole) =>
+            {
+                appRole.Id = 1;
+                return new IdentityResult();
+            });
+            var roleName = "RoleName";
+
+            // Act
+            var result = await controller.Create(new RoleViewModel() { Name = roleName });
+
+            // Assert
+            var okObjectResult = Assert.IsType<OkObjectResult>(result);
+            var role = Assert.IsAssignableFrom<RoleViewModel>(okObjectResult.Value);
+            Assert.Equal(1, role.Id);
+            Assert.Equal(roleName, role.Name);
+        }
+
         private static IEnumerable<ApplicationRole> GetRoles()
         {
             return new List<ApplicationRole>()

@@ -1,4 +1,5 @@
 ﻿using HardwareSensorSystem.Security.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace HardwareSensorSystem.Security.ViewModels
 {
@@ -9,6 +10,7 @@ namespace HardwareSensorSystem.Security.ViewModels
     {
         public int Id { get; set; }
 
+        [Required]
         public string Name { get; set; }
     }
 
