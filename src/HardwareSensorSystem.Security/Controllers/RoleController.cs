@@ -25,6 +25,11 @@ namespace HardwareSensorSystem.Security.Controllers
 
         public async Task<IActionResult> Create(RoleViewModel role)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var dbRole = new ApplicationRole()
             {
                 Name = role.Name

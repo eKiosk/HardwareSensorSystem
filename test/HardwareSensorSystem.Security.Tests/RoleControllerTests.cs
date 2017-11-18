@@ -43,7 +43,7 @@ namespace HardwareSensorSystem.Security.Tests
         }
 
         [Fact]
-        public async Task Create_ValidRole_ReturnCreatedRole()
+        public async Task Create_WithValidRole_ReturnsCreatedRole()
         {
             // Arrange
             var mockRoleManager = GetRoleManagerMock();
@@ -52,17 +52,35 @@ namespace HardwareSensorSystem.Security.Tests
             {
                 appRole.Id = 1;
                 return new IdentityResult();
-            });
+            }).Verifiable();
             var roleName = "RoleName";
 
             // Act
             var result = await controller.Create(new RoleViewModel() { Name = roleName });
 
             // Assert
+            mockRoleManager.Verify();
             var okObjectResult = Assert.IsType<OkObjectResult>(result);
             var role = Assert.IsAssignableFrom<RoleViewModel>(okObjectResult.Value);
             Assert.Equal(1, role.Id);
             Assert.Equal(roleName, role.Name);
+        }
+
+        [Fact]
+        public async Task Create_WithInvalidRole_ReturnsModelError()
+        {
+            // Arrange
+            var mockRoleManager = GetRoleManagerMock();
+            var controller = new RoleController(mockRoleManager.Object);
+            controller.ModelState.AddModelError("Name", "Required");
+
+            // Act
+            var result = await controller.Create(new RoleViewModel());
+
+            // Assert
+            mockRoleManager.Verify(roleManager => roleManager.CreateAsync(It.IsAny<ApplicationRole>()), Times.Never());
+            var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.IsType<SerializableError>(badRequestObjectResult.Value);
         }
 
         private static IEnumerable<ApplicationRole> GetRoles()
