@@ -43,5 +43,36 @@ namespace HardwareSensorSystem.Security.Controllers
 
             return Ok(dbRole.ToViewModel());
         }
+
+        public async Task<IActionResult> Update(int roleId, RoleViewModel role)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var dbRole = new ApplicationRole()
+            {
+                Id = roleId,
+                Name = role.Name
+            };
+
+            var identityResult = await _roleManager.UpdateAsync(dbRole);
+            if (!identityResult.Succeeded)
+            {
+                return BadRequest(identityResult.Errors);
+            }
+
+            return Ok(dbRole.ToViewModel());
+        }
+
+        public async Task<IActionResult> Delete(int roleId)
+        {
+            var role = await _roleManager.FindByIdAsync(roleId.ToString());
+
+            await _roleManager.DeleteAsync(role);
+
+            return Ok();
+        }
     }
 }

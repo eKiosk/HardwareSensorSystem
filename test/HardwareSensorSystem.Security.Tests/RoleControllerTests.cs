@@ -100,6 +100,78 @@ namespace HardwareSensorSystem.Security.Tests
             Assert.IsAssignableFrom<IEnumerable<IdentityError>>(badRequestObjectResult.Value);
         }
 
+        [Fact]
+        public async Task Update_WithValidRole_ReturnsUpdatedRole()
+        {
+            // Arrange
+            var mockRoleManager = GetRoleManagerMock();
+            var controller = new RoleController(mockRoleManager.Object);
+            mockRoleManager.Setup(roleManager => roleManager.UpdateAsync(It.IsAny<ApplicationRole>())).ReturnsAsync(IdentityResult.Success).Verifiable();
+            var roleId = 10;
+            var roleName = "RoleName";
+
+            // Act
+            var result = await controller.Update(roleId, new RoleViewModel() { Name = roleName });
+
+            // Assert
+            mockRoleManager.Verify();
+            var okObjectResult = Assert.IsType<OkObjectResult>(result);
+            var role = Assert.IsAssignableFrom<RoleViewModel>(okObjectResult.Value);
+            Assert.Equal(roleId, role.Id);
+            Assert.Equal(roleName, role.Name);
+        }
+
+        [Fact]
+        public async Task Update_WithInvalidRole_ReturnsModelError()
+        {
+            // Arrange
+            var mockRoleManager = GetRoleManagerMock();
+            var controller = new RoleController(mockRoleManager.Object);
+            controller.ModelState.AddModelError("Name", "Required");
+
+            // Act
+            var result = await controller.Update(1, new RoleViewModel());
+
+            // Assert
+            mockRoleManager.Verify(roleManager => roleManager.UpdateAsync(It.IsAny<ApplicationRole>()), Times.Never());
+            var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.IsType<SerializableError>(badRequestObjectResult.Value);
+        }
+
+        [Fact]
+        public async Task Update_WithUnprocessableRole_ReturnsCollectionOfIdentityErrors()
+        {
+            // Arrange
+            var mockRoleManager = GetRoleManagerMock();
+            var controller = new RoleController(mockRoleManager.Object);
+            mockRoleManager.Setup(roleManager => roleManager.UpdateAsync(It.IsAny<ApplicationRole>())).ReturnsAsync(IdentityResult.Failed()).Verifiable();
+
+            // Act
+            var result = await controller.Update(1, new RoleViewModel());
+
+            // Assert
+            mockRoleManager.Verify();
+            var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.IsAssignableFrom<IEnumerable<IdentityError>>(badRequestObjectResult.Value);
+        }
+
+        [Fact]
+        public async Task Delete_WithRoleId_ReturnsOkResult()
+        {
+            // Arrange
+            var mockRoleManager = GetRoleManagerMock();
+            var controller = new RoleController(mockRoleManager.Object);
+            mockRoleManager.Setup(roleManager => roleManager.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(new ApplicationRole()).Verifiable();
+            mockRoleManager.Setup(roleManager => roleManager.DeleteAsync(It.IsAny<ApplicationRole>())).ReturnsAsync(IdentityResult.Success).Verifiable();
+
+            // Act
+            var result = await controller.Delete(1);
+
+            // Assert
+            mockRoleManager.Verify();
+            Assert.IsType<OkResult>(result);
+        }
+
         private static IEnumerable<ApplicationRole> GetRoles()
         {
             return new List<ApplicationRole>()
