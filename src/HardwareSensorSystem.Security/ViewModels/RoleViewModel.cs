@@ -12,6 +12,8 @@ namespace HardwareSensorSystem.Security.ViewModels
 
         [Required]
         public string Name { get; set; }
+
+        public string ConcurrencyStamp { get; set; }
     }
 
     public static class RoleViewModelExtensions
@@ -26,7 +28,8 @@ namespace HardwareSensorSystem.Security.ViewModels
             return new RoleViewModel()
             {
                 Id = appRole.Id,
-                Name = appRole.Name
+                Name = appRole.Name,
+                ConcurrencyStamp = appRole.ConcurrencyStamp
             };
         }
     }

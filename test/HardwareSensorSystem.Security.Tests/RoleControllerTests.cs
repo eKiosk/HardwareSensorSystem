@@ -39,6 +39,7 @@ namespace HardwareSensorSystem.Security.Tests
                 var role = roles.SingleOrDefault(r => r.Id == testRole.Id);
                 Assert.NotNull(role);
                 Assert.Equal(testRole.Name, role.Name);
+                Assert.Equal(testRole.ConcurrencyStamp, role.ConcurrencyStamp);
             });
         }
 
@@ -46,14 +47,16 @@ namespace HardwareSensorSystem.Security.Tests
         public async Task Create_WithValidRole_ReturnsCreatedRole()
         {
             // Arrange
+            var roleName = "RoleName";
+            var roleConcurrencyStamp = "RoleStamp";
             var mockRoleManager = GetRoleManagerMock();
             var controller = new RoleController(mockRoleManager.Object);
             mockRoleManager.Setup(roleManager => roleManager.CreateAsync(It.IsAny<ApplicationRole>())).ReturnsAsync((ApplicationRole appRole) =>
             {
                 appRole.Id = 1;
+                appRole.ConcurrencyStamp = roleConcurrencyStamp;
                 return IdentityResult.Success;
             }).Verifiable();
-            var roleName = "RoleName";
 
             // Act
             var result = await controller.Create(new RoleViewModel() { Name = roleName });
@@ -64,6 +67,7 @@ namespace HardwareSensorSystem.Security.Tests
             var role = Assert.IsAssignableFrom<RoleViewModel>(okObjectResult.Value);
             Assert.Equal(1, role.Id);
             Assert.Equal(roleName, role.Name);
+            Assert.Equal(roleConcurrencyStamp, role.ConcurrencyStamp);
         }
 
         [Fact]
@@ -104,14 +108,24 @@ namespace HardwareSensorSystem.Security.Tests
         public async Task Update_WithValidRole_ReturnsUpdatedRole()
         {
             // Arrange
-            var mockRoleManager = GetRoleManagerMock();
-            var controller = new RoleController(mockRoleManager.Object);
-            mockRoleManager.Setup(roleManager => roleManager.UpdateAsync(It.IsAny<ApplicationRole>())).ReturnsAsync(IdentityResult.Success).Verifiable();
             var roleId = 10;
             var roleName = "RoleName";
+            var roleConcurrencyStampOld = "OldRoleStamp";
+            var roleConcurrencyStampNew = "NewRoleStamp";
+            var mockRoleManager = GetRoleManagerMock();
+            var controller = new RoleController(mockRoleManager.Object);
+            mockRoleManager.Setup(roleManager => roleManager.UpdateAsync(It.IsAny<ApplicationRole>())).ReturnsAsync((ApplicationRole appRole) =>
+            {
+                appRole.ConcurrencyStamp = roleConcurrencyStampNew;
+                return IdentityResult.Success;
+            }).Verifiable();
 
             // Act
-            var result = await controller.Update(roleId, new RoleViewModel() { Name = roleName });
+            var result = await controller.Update(roleId, new RoleViewModel()
+            {
+                Name = roleName,
+                ConcurrencyStamp = roleConcurrencyStampOld
+            });
 
             // Assert
             mockRoleManager.Verify();
@@ -119,6 +133,7 @@ namespace HardwareSensorSystem.Security.Tests
             var role = Assert.IsAssignableFrom<RoleViewModel>(okObjectResult.Value);
             Assert.Equal(roleId, role.Id);
             Assert.Equal(roleName, role.Name);
+            Assert.Equal(roleConcurrencyStampNew, role.ConcurrencyStamp);
         }
 
         [Fact]
@@ -179,17 +194,20 @@ namespace HardwareSensorSystem.Security.Tests
                 new ApplicationRole()
                 {
                     Id = 1,
-                    Name = "Admin"
+                    Name = "Admin",
+                    ConcurrencyStamp = "AdminStamp"
                 },
                 new ApplicationRole()
                 {
                     Id = 2,
-                    Name = "User"
+                    Name = "User",
+                    ConcurrencyStamp = "UserStamp"
                 },
                 new ApplicationRole()
                 {
                     Id = 3,
-                    Name = "Demo"
+                    Name = "Demo",
+                    ConcurrencyStamp = "DemoStamp"
                 }
             };
         }
