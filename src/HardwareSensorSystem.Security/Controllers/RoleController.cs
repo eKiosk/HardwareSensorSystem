@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace HardwareSensorSystem.Security.Controllers
@@ -71,6 +72,24 @@ namespace HardwareSensorSystem.Security.Controllers
             var role = await _roleManager.FindByIdAsync(roleId.ToString());
 
             await _roleManager.DeleteAsync(role);
+
+            return Ok();
+        }
+
+        public async Task<IActionResult> AddPermission(int roleId, int permissionId)
+        {
+            var role = await _roleManager.FindByIdAsync(roleId.ToString());
+
+            await _roleManager.AddClaimAsync(role, new Claim("Permission", permissionId.ToString()));
+
+            return Ok();
+        }
+
+        public async Task<IActionResult> RemovePermission(int roleId, int permissionId)
+        {
+            var role = await _roleManager.FindByIdAsync(roleId.ToString());
+
+            await _roleManager.RemoveClaimAsync(role, new Claim("Permission", permissionId.ToString()));
 
             return Ok();
         }

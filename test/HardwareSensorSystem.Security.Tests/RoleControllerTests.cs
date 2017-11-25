@@ -9,6 +9,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -181,6 +182,50 @@ namespace HardwareSensorSystem.Security.Tests
 
             // Act
             var result = await controller.Delete(1);
+
+            // Assert
+            mockRoleManager.Verify();
+            Assert.IsType<OkResult>(result);
+        }
+
+        [Fact]
+        public async Task AddPermission_WithPermissionId_ReturnsOkResult()
+        {
+            // Arrange
+            var appRole = new ApplicationRole();
+            var mockRoleManager = GetRoleManagerMock();
+            var controller = new RoleController(mockRoleManager.Object);
+            mockRoleManager.Setup(roleManager => roleManager.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(appRole).Verifiable();
+            mockRoleManager.Setup(roleManager => roleManager.AddClaimAsync(
+                It.Is<ApplicationRole>(role => role.Equals(appRole)),
+                It.Is<Claim>(claim => claim.Type.Equals("Permission") && claim.Value.Equals("1"))))
+                           .ReturnsAsync(IdentityResult.Success)
+                           .Verifiable();
+
+            // Act
+            var result = await controller.AddPermission(1, 1);
+
+            // Assert
+            mockRoleManager.Verify();
+            Assert.IsType<OkResult>(result);
+        }
+
+        [Fact]
+        public async Task RemovePermission_WithPermissionId_ReturnsOkResult()
+        {
+            // Arrange
+            var appRole = new ApplicationRole();
+            var mockRoleManager = GetRoleManagerMock();
+            var controller = new RoleController(mockRoleManager.Object);
+            mockRoleManager.Setup(roleManager => roleManager.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(appRole).Verifiable();
+            mockRoleManager.Setup(roleManager => roleManager.RemoveClaimAsync(
+                It.Is<ApplicationRole>(role => role.Equals(appRole)),
+                It.Is<Claim>(claim => claim.Type.Equals("Permission") && claim.Value.Equals("1"))))
+                           .ReturnsAsync(IdentityResult.Success)
+                           .Verifiable();
+
+            // Act
+            var result = await controller.RemovePermission(1, 1);
 
             // Assert
             mockRoleManager.Verify();
