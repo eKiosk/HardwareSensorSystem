@@ -1,12 +1,14 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { UserRouting } from './user.routing';
+import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
+
 import { RoleListComponent } from './role-list/role-list.component';
+import { USER_ROUTING } from './user.routing';
 
 @NgModule({
   imports: [
     CommonModule,
-    UserRouting
+    RouterModule.forChild(USER_ROUTING)
   ],
   declarations: [RoleListComponent]
 })

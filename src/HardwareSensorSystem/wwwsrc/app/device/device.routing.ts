@@ -1,9 +1,7 @@
-import { Routes, RouterModule } from '@angular/router';
+import { Routes } from '@angular/router';
 
 import { DeviceListComponent } from './device-list/device-list.component';
 
-const routes = [
+export const DEVICE_ROUTES: Routes = [
   { path: '', component: DeviceListComponent }
 ];
-
-export const DeviceRouting = RouterModule.forChild(routes);

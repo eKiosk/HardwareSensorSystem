@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 
 import { LogoutComponent } from './logout.component';
+import { LogoutModule } from './logout.module';
 
 const routerStub = {
   navigate: (commands: any[]) => { }
@@ -13,7 +14,9 @@ describe('LogoutComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [LogoutComponent],
+      imports: [
+        LogoutModule
+      ],
       providers: [
         {
           provide: Router,
@@ -21,15 +24,12 @@ describe('LogoutComponent', () => {
         }
       ]
     });
-  });
 
-  beforeEach(() => {
     fixture = TestBed.createComponent(LogoutComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
-  it('should be created', () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

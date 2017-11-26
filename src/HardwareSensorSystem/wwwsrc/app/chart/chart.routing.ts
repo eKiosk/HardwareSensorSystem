@@ -1,9 +1,7 @@
-import { Routes, RouterModule } from '@angular/router';
+import { Routes } from '@angular/router';
 
 import { ChartListComponent } from './chart-list/chart-list.component';
 
-const routes: Routes = [
+export const CHART_ROUTES: Routes = [
   { path: '', component: ChartListComponent }
 ];
-
-export const ChartRouting = RouterModule.forChild(routes);

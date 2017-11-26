@@ -1,9 +1,7 @@
-import { Routes, RouterModule } from '@angular/router';
+import { Routes } from '@angular/router';
 
 import { RoleListComponent } from './role-list/role-list.component';
 
-const routes: Routes = [
+export const USER_ROUTING: Routes = [
   { path: '', component: RoleListComponent }
 ];
-
-export const UserRouting = RouterModule.forChild(routes);
