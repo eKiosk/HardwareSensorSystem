@@ -9,6 +9,7 @@ import { ChartModule } from './chart/chart.module';
 import { LayoutModule } from './layout/layout.module';
 import { LoginModule } from './login/login.module';
 import { LogoutModule } from './logout/logout.module';
+import { SecurityModule } from './security/security.module';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { LogoutModule } from './logout/logout.module';
     BrowserModule,
     BrowserAnimationsModule,
     RouterModule.forRoot(APP_ROUTES),
+    SecurityModule,
     LoginModule,
     LogoutModule,
     LayoutModule,

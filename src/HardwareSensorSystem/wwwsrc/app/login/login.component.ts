@@ -1,3 +1,4 @@
+import { AuthenticationService } from '../security/authentication.service';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -16,7 +17,8 @@ export class LoginComponent {
 
   constructor(
     fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private authenticationService: AuthenticationService
   ) {
     this.form = fb.group({
       userName: ['', [Validators.required, Validators.minLength(6)]],
@@ -25,7 +27,9 @@ export class LoginComponent {
   }
 
   login() {
-    this.router.navigate(['/charts']);
+    this.authenticationService.login(this.form.value.userName, this.form.value.password).subscribe(() => {
+      this.router.navigate(['/charts']);
+    });
   }
 
 }
