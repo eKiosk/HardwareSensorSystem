@@ -1,23 +1,26 @@
-import 'rxjs/add/operator/catch';
-
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { JwtHelperService } from '@auth0/angular-jwt';
 import { Observable } from 'rxjs/Observable';
 import { interval } from 'rxjs/observable/interval';
-import { map } from 'rxjs/operators';
+import { _throw } from 'rxjs/observable/throw';
+import { catchError, map } from 'rxjs/operators';
 import { Subscription } from 'rxjs/Subscription';
 
 import { Token } from './token';
 
 @Injectable()
 export class AuthenticationService {
-  private static readonly accessTokenName = 'accessToken';
+  public static readonly accessTokenName = 'accessToken';
   private static readonly refreshTokenName = 'refreshToken';
 
   private headers: HttpHeaders;
   private refreshSubscription: Subscription;
 
-  constructor(private httpClient: HttpClient) {
+  constructor(
+    private httpClient: HttpClient,
+    private jwtHelperService: JwtHelperService
+  ) {
     this.headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' });
 
     if (sessionStorage.getItem(AuthenticationService.refreshTokenName)) {
@@ -40,10 +43,11 @@ export class AuthenticationService {
           this.refreshToken();
         });
         return;
+      }),
+      catchError(error => {
+        return _throw('Service steht im Moment leider nicht zur Verfügung');
       })
-    ).catch(error => {
-      return Observable.throw('Service steht im Moment leider nicht zur Verfügung');
-    });
+    );
   }
 
   logout() {
@@ -53,6 +57,14 @@ export class AuthenticationService {
 
     sessionStorage.removeItem(AuthenticationService.refreshTokenName);
     sessionStorage.removeItem(AuthenticationService.accessTokenName);
+  }
+
+  isAuthenticated(): boolean {
+    const accessToken = sessionStorage.getItem(AuthenticationService.accessTokenName);
+    if (accessToken) {
+      return false;
+    }
+    return this.jwtHelperService.isTokenExpired(accessToken);
   }
 
   private refreshToken() {
