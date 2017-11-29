@@ -13,6 +13,10 @@ import { LoginModule } from './login/login.module';
 import { LogoutModule } from './logout/logout.module';
 import { AuthenticationService, SecurityModule } from './security';
 
+export function tokenGetter() {
+  return sessionStorage.getItem(AuthenticationService.accessTokenName);
+}
+
 @NgModule({
   declarations: [
     AppComponent
@@ -24,7 +28,7 @@ import { AuthenticationService, SecurityModule } from './security';
     RouterModule.forRoot(APP_ROUTES),
     JwtModule.forRoot({
       config: {
-        tokenGetter: () => sessionStorage.getItem(AuthenticationService.accessTokenName)
+        tokenGetter: tokenGetter
       }
     }),
     SecurityModule,

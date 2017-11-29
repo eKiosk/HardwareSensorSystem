@@ -3,9 +3,14 @@ import { Router } from '@angular/router';
 
 import { LogoutComponent } from './logout.component';
 import { LogoutModule } from './logout.module';
+import { AuthenticationService } from '../security/authentication.service';
 
 const routerStub = {
   navigate: (commands: any[]) => { }
+};
+
+const authenticationServiceStub = {
+  logout: () => { }
 };
 
 describe('LogoutComponent', () => {
@@ -21,6 +26,10 @@ describe('LogoutComponent', () => {
         {
           provide: Router,
           useValue: routerStub
+        },
+        {
+          provide: AuthenticationService,
+          useValue: authenticationServiceStub
         }
       ]
     });
