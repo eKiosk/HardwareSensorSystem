@@ -25,11 +25,11 @@
     <ProjectReference Include="..\HardwareSensorSystem.Security\HardwareSensorSystem.Security.csproj" />
   </ItemGroup>
 
-  <Target Name="Build Angular" BeforeTargets="Build" Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+  <Target Name="Build Angular" BeforeTargets="Build" Condition="'$(Configuration)'=='Release'">
     <Message Text="* * * * * Install Dependencies * * * * *" Importance="high" />
     <Exec command="npm install" />
     <Message Text="* * * * * Building Angular App * * * * *" Importance="high" />
-    <Exec command="ng build -prod" />
+    <Exec command=".\node_modules\.bin\ng build --prod" />
   </Target>
 
 </Project>
