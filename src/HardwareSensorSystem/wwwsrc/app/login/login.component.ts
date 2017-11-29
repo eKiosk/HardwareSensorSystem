@@ -21,7 +21,7 @@ export class LoginComponent {
     private authenticationService: AuthenticationService
   ) {
     this.form = fb.group({
-      userName: ['', [Validators.required, Validators.minLength(6)]],
+      userName: ['', [Validators.required, Validators.minLength(5)]],
       password: ['', [Validators.required, Validators.minLength(8)]]
     });
   }

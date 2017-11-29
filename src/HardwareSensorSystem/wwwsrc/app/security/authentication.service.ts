@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Observable } from 'rxjs/Observable';
@@ -29,14 +29,14 @@ export class AuthenticationService {
   }
 
   login(username: string, password: string): Observable<void> {
-    const body = new HttpParams();
+    const body = new URLSearchParams();
     body.set('grant_type', 'password');
     body.set('client_id', 'hardwaresensorsystem');
     body.set('scope', 'offline_access');
     body.set('username', username);
     body.set('password', password);
 
-    return this.httpClient.post<Token>('/connect/token', body, { headers: this.headers }).pipe(
+    return this.httpClient.post<Token>('/connect/token', body.toString(), { headers: this.headers }).pipe(
       map(token => {
         this.setToken(token);
         this.refreshSubscription = interval((token.expiresIn - 120) * 1000).subscribe(() => {
@@ -68,13 +68,13 @@ export class AuthenticationService {
   }
 
   private refreshToken() {
-    const body = new HttpParams();
+    const body = new URLSearchParams();
     body.set('grant_type', 'refresh_token');
     body.set('client_id', 'hardwaresensorsystem');
     body.set('scope', 'offline_access');
     body.set('refresh_token', sessionStorage.getItem(AuthenticationService.refreshTokenName));
 
-    this.httpClient.post<Token>('/connect/token', body, { headers: this.headers }).subscribe(token => {
+    this.httpClient.post<Token>('/connect/token', body.toString(), { headers: this.headers }).subscribe(token => {
       this.setToken(token);
       if (this.refreshSubscription) {
         this.refreshSubscription = interval((token.expiresIn - 120) * 1000).subscribe(() => {
