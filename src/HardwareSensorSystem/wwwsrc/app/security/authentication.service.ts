@@ -36,7 +36,15 @@ export class AuthenticationService {
     body.set('username', username);
     body.set('password', password);
 
-    return this.httpClient.post<Token>('/connect/token', body.toString(), { headers: this.headers }).pipe(
+    return this.httpClient.post<any>('/connect/token', body.toString(), { headers: this.headers }).pipe(
+      map(response => {
+        return <Token>{
+          accessToken: response.access_token,
+          expiresIn: response.expires_in,
+          tokenType: response.token_type,
+          refreshToken: response.refresh_token
+        };
+      }),
       map(token => {
         this.setToken(token);
         this.refreshSubscription = interval((token.expiresIn - 120) * 1000).subscribe(() => {
@@ -61,20 +69,28 @@ export class AuthenticationService {
 
   isAuthenticated(): boolean {
     const accessToken = sessionStorage.getItem(AuthenticationService.accessTokenName);
-    if (accessToken) {
+    if (!accessToken) {
       return false;
     }
-    return this.jwtHelperService.isTokenExpired(accessToken);
+    return !this.jwtHelperService.isTokenExpired(accessToken);
   }
 
   private refreshToken() {
     const body = new URLSearchParams();
     body.set('grant_type', 'refresh_token');
     body.set('client_id', 'hardwaresensorsystem');
-    body.set('scope', 'offline_access');
     body.set('refresh_token', sessionStorage.getItem(AuthenticationService.refreshTokenName));
 
-    this.httpClient.post<Token>('/connect/token', body.toString(), { headers: this.headers }).subscribe(token => {
+    this.httpClient.post<any>('/connect/token', body.toString(), { headers: this.headers }).pipe(
+      map(response => {
+        return <Token>{
+          accessToken: response.access_token,
+          expiresIn: response.expires_in,
+          tokenType: response.token_type,
+          refreshToken: response.refresh_token
+        };
+      })
+    ).subscribe(token => {
       this.setToken(token);
       if (this.refreshSubscription) {
         this.refreshSubscription = interval((token.expiresIn - 120) * 1000).subscribe(() => {
