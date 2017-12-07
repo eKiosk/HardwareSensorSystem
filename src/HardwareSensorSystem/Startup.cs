@@ -25,6 +25,8 @@ namespace HardwareSensorSystem
             {
                 options.UseSqlServer(_configuration.GetValue<string>("DATABASE"), b => b.MigrationsAssembly("HardwareSensorSystem"));
             });
+
+            services.AddMvc();
         }
 
         /// <summary>
@@ -40,6 +42,8 @@ namespace HardwareSensorSystem
             }
 
             app.UseSecurity();
+
+            app.UseMvcWithDefaultRoute();
         }
     }
 }

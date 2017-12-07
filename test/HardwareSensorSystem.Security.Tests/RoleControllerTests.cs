@@ -45,6 +45,33 @@ namespace HardwareSensorSystem.Security.Tests
         }
 
         [Fact]
+        public async Task GetById_WithRoleId_ReturnsRole()
+        {
+            // Arrange
+            var testRole = new ApplicationRole()
+            {
+                Id = 10,
+                Name = "RoleName",
+                ConcurrencyStamp = "RoleStamp"
+            };
+            var mockRoleManager = GetRoleManagerMock();
+            mockRoleManager.Setup(roleManager => roleManager.FindByIdAsync(
+                    It.Is<string>(roleId => roleId.Equals(testRole.Id.ToString()))
+                )).ReturnsAsync(testRole);
+            var controller = new RoleController(mockRoleManager.Object);
+
+            // Act
+            var result = await controller.GetById(testRole.Id);
+
+            // Assert
+            var okObjectResult = Assert.IsType<OkObjectResult>(result);
+            var role = Assert.IsAssignableFrom<RoleViewModel>(okObjectResult.Value);
+            Assert.Equal(testRole.Id, role.Id);
+            Assert.Equal(testRole.Name, role.Name);
+            Assert.Equal(testRole.ConcurrencyStamp, role.ConcurrencyStamp);
+        }
+
+        [Fact]
         public async Task Create_WithValidRole_ReturnsCreatedRole()
         {
             // Arrange
