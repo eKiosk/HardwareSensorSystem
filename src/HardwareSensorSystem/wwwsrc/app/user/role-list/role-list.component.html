@@ -14,6 +14,12 @@
       <button mat-icon-button [routerLink]="['/roles', role.id]">
         <mat-icon fontSet="fontawesome" fontIcon="fa-pencil-square-o"></mat-icon>
       </button>
+      <button mat-icon-button (click)="deleteRole(role)">
+        <mat-icon fontSet="fontawesome" fontIcon="fa-trash-o"></mat-icon>
+      </button>
+      <button mat-icon-button [routerLink]="['/roles', role.id, 'permissions']">
+        <mat-icon fontSet="fontawesome" fontIcon="fa-shield"></mat-icon>
+      </button>
     </mat-cell>
   </ng-container>
 

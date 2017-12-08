@@ -216,6 +216,36 @@ namespace HardwareSensorSystem.Security.Tests
         }
 
         [Fact]
+        public async Task GetPermissions_WithRoleId_ReturnsCollectionOfPermissionIds()
+        {
+            // Arrange
+            var appRole = new ApplicationRole();
+            var permissionClaims = new List<Claim>()
+            {
+                new Claim("Permission", "1")
+            };
+            var mockRoleManager = GetRoleManagerMock();
+            var controller = new RoleController(mockRoleManager.Object);
+            mockRoleManager.Setup(roleManager => roleManager.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(appRole).Verifiable();
+            mockRoleManager.Setup(roleManager => roleManager.GetClaimsAsync(
+                It.Is<ApplicationRole>(role => role.Equals(appRole))))
+                           .ReturnsAsync(permissionClaims)
+                           .Verifiable();
+
+            // Act
+            var result = await controller.GetPermissions(1);
+
+            // Assert
+            mockRoleManager.Verify();
+            var okObjectResult = Assert.IsType<OkObjectResult>(result);
+            var permissionIds = Assert.IsAssignableFrom<IEnumerable<int>>(okObjectResult.Value);
+            Assert.All(permissionClaims, permissionClaim =>
+            {
+                var permission = permissionIds.Single(id => id.ToString() == permissionClaim.Value);
+            });
+        }
+
+        [Fact]
         public async Task AddPermission_WithPermissionId_ReturnsOkResult()
         {
             // Arrange

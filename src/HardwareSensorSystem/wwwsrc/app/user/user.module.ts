@@ -8,11 +8,14 @@ import {
   MatIconRegistry,
   MatInputModule,
   MatPaginatorModule,
+  MatSlideToggleModule,
   MatSortModule,
   MatTableModule
 } from '@angular/material';
 import { RouterModule } from '@angular/router';
 
+import { PermissionListComponent } from './permission-list/permission-list.component';
+import { PermissionService } from './permission.service';
 import { RoleDetailComponent } from './role-detail/role-detail.component';
 import { RoleListComponent } from './role-list/role-list.component';
 import { RoleService } from './role.service';
@@ -28,15 +31,18 @@ import { USER_ROUTING } from './user.routing';
     MatIconModule,
     MatInputModule,
     MatPaginatorModule,
+    MatSlideToggleModule,
     MatSortModule,
     MatTableModule
   ],
   declarations: [
     RoleListComponent,
-    RoleDetailComponent
+    RoleDetailComponent,
+    PermissionListComponent
   ],
   providers: [
-    RoleService
+    RoleService,
+    PermissionService
   ]
 })
 export class UserModule {

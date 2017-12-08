@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace HardwareSensorSystem.Security.Controllers
 {
+    [Route("api/permissions")]
     public class PermissionController : Controller
     {
         private ApplicationDbContext _context;
@@ -16,6 +17,8 @@ namespace HardwareSensorSystem.Security.Controllers
             _context = context;
         }
 
+        [HttpGet]
+        [Produces("application/json")]
         public async Task<IActionResult> GetAll()
         {
             var permissions = await _context.Permissions.Select(p => p.ToViewModel()).ToListAsync();

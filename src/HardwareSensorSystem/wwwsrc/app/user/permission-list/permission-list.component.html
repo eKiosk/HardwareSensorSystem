@@ -1,0 +1,13 @@
+<div>
+  <button mat-raised-button [routerLink]="['/roles']">Zurück</button>
+</div>
+
+<ng-container *ngIf="rolePermissionIds">
+  <ng-container *ngFor="let permission of permissions | async">
+    <p>
+      <mat-slide-toggle [id]="permission.id" [checked]="rolePermissionIds.includes(permission.id)" (change)="save($event)">
+        {{ permission.name }}
+      </mat-slide-toggle>
+    </p>
+  </ng-container>
+</ng-container>

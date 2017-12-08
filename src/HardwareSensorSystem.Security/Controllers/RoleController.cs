@@ -3,6 +3,7 @@ using HardwareSensorSystem.Security.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -93,6 +94,18 @@ namespace HardwareSensorSystem.Security.Controllers
             await _roleManager.DeleteAsync(role);
 
             return Ok();
+        }
+
+        [HttpGet("{roleId}/permissions")]
+        [Produces("application/json")]
+        public async Task<IActionResult> GetPermissions([FromRoute]int roleId)
+        {
+            var role = await _roleManager.FindByIdAsync(roleId.ToString());
+
+            var claims = await _roleManager.GetClaimsAsync(role);
+            var permissions = claims.Where(claim => claim.Type == "Permission").Select(claim => Convert.ToInt32(claim.Value));
+
+            return Ok(permissions);
         }
 
         [HttpPost("{roleId}/permissions/{permissionId}")]

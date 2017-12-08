@@ -35,4 +35,12 @@ export class RoleListComponent implements OnInit, AfterViewInit {
     this.dataSource.sort = this.sort;
   }
 
+  deleteRole(role: Role) {
+    if (confirm(`Delete role '${role.name}'?`)) {
+      this.roleService.delete(role).subscribe(() => {
+        this.dataSource.data = this.dataSource.data.filter(dataRole => dataRole.id !== role.id);
+      });
+    }
+  }
+
 }
