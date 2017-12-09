@@ -3,10 +3,7 @@ using HardwareSensorSystem.Security.Models;
 using HardwareSensorSystem.Security.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Moq;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -22,8 +19,8 @@ namespace HardwareSensorSystem.Security.Tests
         {
             // Arrange
             var testRoles = GetRoles();
-            var mockRoleManager = GetRoleManagerMock();
-            var dbContext = GetDbContext();
+            var mockRoleManager = Setup.GetRoleManagerMock();
+            var dbContext = Setup.GetDbContext();
             dbContext.Roles.AddRange(testRoles);
             dbContext.SaveChanges();
             mockRoleManager.Setup(roleManager => roleManager.Roles).Returns(dbContext.Roles);
@@ -54,7 +51,7 @@ namespace HardwareSensorSystem.Security.Tests
                 Name = "RoleName",
                 ConcurrencyStamp = "RoleStamp"
             };
-            var mockRoleManager = GetRoleManagerMock();
+            var mockRoleManager = Setup.GetRoleManagerMock();
             mockRoleManager.Setup(roleManager => roleManager.FindByIdAsync(
                     It.Is<string>(roleId => roleId.Equals(testRole.Id.ToString()))
                 )).ReturnsAsync(testRole);
@@ -77,7 +74,7 @@ namespace HardwareSensorSystem.Security.Tests
             // Arrange
             var roleName = "RoleName";
             var roleConcurrencyStamp = "RoleStamp";
-            var mockRoleManager = GetRoleManagerMock();
+            var mockRoleManager = Setup.GetRoleManagerMock();
             var controller = new RoleController(mockRoleManager.Object);
             mockRoleManager.Setup(roleManager => roleManager.CreateAsync(It.IsAny<ApplicationRole>())).ReturnsAsync((ApplicationRole appRole) =>
             {
@@ -102,7 +99,7 @@ namespace HardwareSensorSystem.Security.Tests
         public async Task Create_WithInvalidRole_ReturnsModelError()
         {
             // Arrange
-            var mockRoleManager = GetRoleManagerMock();
+            var mockRoleManager = Setup.GetRoleManagerMock();
             var controller = new RoleController(mockRoleManager.Object);
             controller.ModelState.AddModelError("Name", "Required");
 
@@ -119,7 +116,7 @@ namespace HardwareSensorSystem.Security.Tests
         public async Task Create_WithUnprocessableRole_ReturnsCollectionOfIdentityErrors()
         {
             // Arrange
-            var mockRoleManager = GetRoleManagerMock();
+            var mockRoleManager = Setup.GetRoleManagerMock();
             var controller = new RoleController(mockRoleManager.Object);
             mockRoleManager.Setup(roleManager => roleManager.CreateAsync(It.IsAny<ApplicationRole>())).ReturnsAsync(IdentityResult.Failed()).Verifiable();
 
@@ -140,7 +137,7 @@ namespace HardwareSensorSystem.Security.Tests
             var roleName = "RoleName";
             var roleConcurrencyStampOld = "OldRoleStamp";
             var roleConcurrencyStampNew = "NewRoleStamp";
-            var mockRoleManager = GetRoleManagerMock();
+            var mockRoleManager = Setup.GetRoleManagerMock();
             var controller = new RoleController(mockRoleManager.Object);
             mockRoleManager.Setup(roleManager => roleManager.UpdateAsync(It.IsAny<ApplicationRole>())).ReturnsAsync((ApplicationRole appRole) =>
             {
@@ -168,7 +165,7 @@ namespace HardwareSensorSystem.Security.Tests
         public async Task Update_WithInvalidRole_ReturnsModelError()
         {
             // Arrange
-            var mockRoleManager = GetRoleManagerMock();
+            var mockRoleManager = Setup.GetRoleManagerMock();
             var controller = new RoleController(mockRoleManager.Object);
             controller.ModelState.AddModelError("Name", "Required");
 
@@ -185,7 +182,7 @@ namespace HardwareSensorSystem.Security.Tests
         public async Task Update_WithUnprocessableRole_ReturnsCollectionOfIdentityErrors()
         {
             // Arrange
-            var mockRoleManager = GetRoleManagerMock();
+            var mockRoleManager = Setup.GetRoleManagerMock();
             var controller = new RoleController(mockRoleManager.Object);
             mockRoleManager.Setup(roleManager => roleManager.UpdateAsync(It.IsAny<ApplicationRole>())).ReturnsAsync(IdentityResult.Failed()).Verifiable();
 
@@ -202,7 +199,7 @@ namespace HardwareSensorSystem.Security.Tests
         public async Task Delete_WithRoleId_ReturnsOkResult()
         {
             // Arrange
-            var mockRoleManager = GetRoleManagerMock();
+            var mockRoleManager = Setup.GetRoleManagerMock();
             var controller = new RoleController(mockRoleManager.Object);
             mockRoleManager.Setup(roleManager => roleManager.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(new ApplicationRole()).Verifiable();
             mockRoleManager.Setup(roleManager => roleManager.DeleteAsync(It.IsAny<ApplicationRole>())).ReturnsAsync(IdentityResult.Success).Verifiable();
@@ -224,7 +221,7 @@ namespace HardwareSensorSystem.Security.Tests
             {
                 new Claim("Permission", "1")
             };
-            var mockRoleManager = GetRoleManagerMock();
+            var mockRoleManager = Setup.GetRoleManagerMock();
             var controller = new RoleController(mockRoleManager.Object);
             mockRoleManager.Setup(roleManager => roleManager.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(appRole).Verifiable();
             mockRoleManager.Setup(roleManager => roleManager.GetClaimsAsync(
@@ -250,7 +247,7 @@ namespace HardwareSensorSystem.Security.Tests
         {
             // Arrange
             var appRole = new ApplicationRole();
-            var mockRoleManager = GetRoleManagerMock();
+            var mockRoleManager = Setup.GetRoleManagerMock();
             var controller = new RoleController(mockRoleManager.Object);
             mockRoleManager.Setup(roleManager => roleManager.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(appRole).Verifiable();
             mockRoleManager.Setup(roleManager => roleManager.AddClaimAsync(
@@ -272,7 +269,7 @@ namespace HardwareSensorSystem.Security.Tests
         {
             // Arrange
             var appRole = new ApplicationRole();
-            var mockRoleManager = GetRoleManagerMock();
+            var mockRoleManager = Setup.GetRoleManagerMock();
             var controller = new RoleController(mockRoleManager.Object);
             mockRoleManager.Setup(roleManager => roleManager.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(appRole).Verifiable();
             mockRoleManager.Setup(roleManager => roleManager.RemoveClaimAsync(
@@ -312,25 +309,6 @@ namespace HardwareSensorSystem.Security.Tests
                     ConcurrencyStamp = "DemoStamp"
                 }
             };
-        }
-
-        private static ApplicationDbContext GetDbContext()
-        {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options;
-
-            return new ApplicationDbContext(options);
-        }
-
-        private static Mock<RoleManager<ApplicationRole>> GetRoleManagerMock()
-        {
-            return new Mock<RoleManager<ApplicationRole>>(
-                new Mock<IRoleStore<ApplicationRole>>().Object,
-                new List<IRoleValidator<ApplicationRole>>(),
-                new Mock<ILookupNormalizer>().Object,
-                new IdentityErrorDescriber(),
-                new Mock<ILogger<RoleManager<ApplicationRole>>>().Object);
         }
     }
 }

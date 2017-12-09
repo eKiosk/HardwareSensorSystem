@@ -2,8 +2,6 @@
 using HardwareSensorSystem.Security.Models;
 using HardwareSensorSystem.Security.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,7 +16,7 @@ namespace HardwareSensorSystem.Security.Tests
         {
             // Arrange
             var testPermissions = GetPermissions();
-            var dbContext = GetDbContext();
+            var dbContext = Setup.GetDbContext();
             dbContext.Permissions.AddRange(testPermissions);
             dbContext.SaveChanges();
             var controller = new PermissionController(dbContext);
@@ -57,15 +55,6 @@ namespace HardwareSensorSystem.Security.Tests
                     Name = "Delete"
                 }
             };
-        }
-
-        private static ApplicationDbContext GetDbContext()
-        {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options;
-
-            return new ApplicationDbContext(options);
         }
     }
 }

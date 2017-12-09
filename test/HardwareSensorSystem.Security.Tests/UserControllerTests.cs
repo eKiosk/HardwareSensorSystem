@@ -1,13 +1,7 @@
 ﻿using HardwareSensorSystem.Security.Controllers;
 using HardwareSensorSystem.Security.Models;
 using HardwareSensorSystem.Security.ViewModels;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Moq;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,8 +16,8 @@ namespace HardwareSensorSystem.Security.Tests
         {
             // Arrange
             var testUsers = GetUsers();
-            var mockUserManager = GetUserManagerMock();
-            var dbContext = GetDbContext();
+            var mockUserManager = Setup.GetUserManagerMock();
+            var dbContext = Setup.GetDbContext();
             dbContext.Users.AddRange(testUsers);
             dbContext.SaveChanges();
             mockUserManager.Setup(userManager => userManager.Users).Returns(dbContext.Users);
@@ -67,29 +61,6 @@ namespace HardwareSensorSystem.Security.Tests
                     Email = "bob@example.com"
                 }
             };
-        }
-
-        private static ApplicationDbContext GetDbContext()
-        {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options;
-
-            return new ApplicationDbContext(options);
-        }
-
-        private static Mock<UserManager<ApplicationUser>> GetUserManagerMock()
-        {
-            return new Mock<UserManager<ApplicationUser>>(
-                new Mock<IUserStore<ApplicationUser>>().Object,
-                new Mock<IOptions<IdentityOptions>>().Object,
-                new Mock<IPasswordHasher<ApplicationUser>>().Object,
-                new List<IUserValidator<ApplicationUser>>(),
-                new List<IPasswordValidator<ApplicationUser>>(),
-                new Mock<ILookupNormalizer>().Object,
-                new IdentityErrorDescriber(),
-                new Mock<IServiceProvider>().Object,
-                new Mock<ILogger<UserManager<ApplicationUser>>>().Object);
         }
     }
 }
