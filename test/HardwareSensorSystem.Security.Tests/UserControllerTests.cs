@@ -1,7 +1,9 @@
 ﻿using HardwareSensorSystem.Security.Controllers;
 using HardwareSensorSystem.Security.Models;
 using HardwareSensorSystem.Security.ViewModels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,7 +23,7 @@ namespace HardwareSensorSystem.Security.Tests
             dbContext.Users.AddRange(testUsers);
             dbContext.SaveChanges();
             mockUserManager.Setup(userManager => userManager.Users).Returns(dbContext.Users);
-            var controller = new UserController(mockUserManager.Object);
+            var controller = new UserController(mockUserManager.Object, null);
 
             // Act
             var result = await controller.GetAll();
@@ -36,6 +38,56 @@ namespace HardwareSensorSystem.Security.Tests
                 Assert.Equal(testUser.UserName, user.UserName);
                 Assert.Equal(testUser.Email, user.Email);
             });
+        }
+
+        [Fact]
+        public async Task Create_WithValidUser_ReturnCreatedUser()
+        {
+            // Arrange
+            var userName = "UserName";
+            var userEmail = "user@example.org";
+            var userConcurrencyStamp = "UserStamp";
+            var testRole = new ApplicationRole()
+            {
+                Id = 10,
+                Name = "RoleName",
+                ConcurrencyStamp = "RoleStamp"
+            };
+            var mockUserManager = Setup.GetUserManagerMock();
+            var mockRoleManager = Setup.GetRoleManagerMock();
+            var controller = new UserController(mockUserManager.Object, mockRoleManager.Object);
+            mockRoleManager.Setup(roleManager => roleManager.FindByIdAsync(
+                    It.Is<string>(roleId => roleId.Equals(testRole.Id.ToString()))
+                )).ReturnsAsync(testRole);
+            mockUserManager.Setup(userManager => userManager.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
+                .ReturnsAsync((ApplicationUser appUser, string appUserPassword) =>
+               {
+                   appUser.Id = 1;
+                   appUser.ConcurrencyStamp = userConcurrencyStamp;
+                   return IdentityResult.Success;
+               }).Verifiable();
+            mockUserManager.Setup(userManager => userManager.AddToRoleAsync(
+                    It.IsAny<ApplicationUser>(),
+                    It.Is<string>(roleName => roleName.Equals(testRole.Name))
+                )).ReturnsAsync(IdentityResult.Success).Verifiable();
+
+            // Act
+            var result = await controller.Create(new UserCreateViewModel()
+            {
+                UserName = userName,
+                Email = userEmail,
+                Password = "12345678",
+                RoleId = testRole.Id
+            });
+
+            // Assert
+            mockUserManager.Verify();
+            var okObjectResult = Assert.IsType<OkObjectResult>(result);
+            var user = Assert.IsAssignableFrom<UserViewModel>(okObjectResult.Value);
+            Assert.Equal(1, user.Id);
+            Assert.Equal(userName, user.UserName);
+            Assert.Equal(userEmail, user.Email);
+            Assert.Equal(userConcurrencyStamp, user.ConcurrencyStamp);
         }
 
         private static IEnumerable<ApplicationUser> GetUsers()
