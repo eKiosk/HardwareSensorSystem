@@ -19,11 +19,12 @@ namespace HardwareSensorSystem.Security.Tests
             // Arrange
             var testUsers = GetUsers();
             var mockUserManager = Setup.GetUserManagerMock();
+            var mockRoleManager = Setup.GetRoleManagerMock();
             var dbContext = Setup.GetDbContext();
             dbContext.Users.AddRange(testUsers);
             dbContext.SaveChanges();
             mockUserManager.Setup(userManager => userManager.Users).Returns(dbContext.Users);
-            var controller = new UserController(mockUserManager.Object, null);
+            var controller = new UserController(mockUserManager.Object, mockRoleManager.Object);
 
             // Act
             var result = await controller.GetAll();
@@ -88,6 +89,24 @@ namespace HardwareSensorSystem.Security.Tests
             Assert.Equal(userName, user.UserName);
             Assert.Equal(userEmail, user.Email);
             Assert.Equal(userConcurrencyStamp, user.ConcurrencyStamp);
+        }
+
+        [Fact]
+        public async Task Create_WithInvalidUser_ReturnsModelError()
+        {
+            // Arrange
+            var mockUserManager = Setup.GetUserManagerMock();
+            var mockRoleManager = Setup.GetRoleManagerMock();
+            var controller = new UserController(mockUserManager.Object, mockRoleManager.Object);
+            controller.ModelState.AddModelError("UserName", "Required");
+
+            // Act
+            var result = await controller.Create(new UserCreateViewModel());
+
+            // Assert
+            mockUserManager.Verify(userManager => userManager.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()), Times.Never());
+            var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.IsType<SerializableError>(badRequestObjectResult.Value);
         }
 
         private static IEnumerable<ApplicationUser> GetUsers()

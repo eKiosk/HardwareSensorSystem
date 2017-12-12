@@ -27,6 +27,11 @@ namespace HardwareSensorSystem.Security.Controllers
 
         public async Task<IActionResult> Create(UserCreateViewModel user)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var dbUser = new ApplicationUser()
             {
                 UserName = user.UserName,
