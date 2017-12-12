@@ -109,6 +109,24 @@ namespace HardwareSensorSystem.Security.Tests
             Assert.IsType<SerializableError>(badRequestObjectResult.Value);
         }
 
+        [Fact]
+        public async Task Create_WithInvalidRoleId_ReturnsModelError()
+        {
+            // Arrange
+            var mockUserManager = Setup.GetUserManagerMock();
+            var mockRoleManager = Setup.GetRoleManagerMock();
+            var controller = new UserController(mockUserManager.Object, mockRoleManager.Object);
+            mockRoleManager.Setup(roleManager => roleManager.FindByIdAsync(It.IsAny<string>())).ReturnsAsync((ApplicationRole)null);
+
+            // Act
+            var result = await controller.Create(new UserCreateViewModel() { RoleId = 1 });
+
+            // Assert
+            mockUserManager.Verify(userManager => userManager.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()), Times.Never());
+            var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.IsType<SerializableError>(badRequestObjectResult.Value);
+        }
+
         private static IEnumerable<ApplicationUser> GetUsers()
         {
             return new List<ApplicationUser>()

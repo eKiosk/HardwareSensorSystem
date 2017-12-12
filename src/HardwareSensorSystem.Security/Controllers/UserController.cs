@@ -32,6 +32,13 @@ namespace HardwareSensorSystem.Security.Controllers
                 return BadRequest(ModelState);
             }
 
+            var dbRole = await _roleManager.FindByIdAsync(user.RoleId.ToString());
+            if (dbRole is null)
+            {
+                ModelState.AddModelError(nameof(user.RoleId), "Invalid role id.");
+                return BadRequest(ModelState);
+            }
+
             var dbUser = new ApplicationUser()
             {
                 UserName = user.UserName,
@@ -40,7 +47,6 @@ namespace HardwareSensorSystem.Security.Controllers
 
             await _userManager.CreateAsync(dbUser, user.Password);
 
-            var dbRole = await _roleManager.FindByIdAsync(user.RoleId.ToString());
             await _userManager.AddToRoleAsync(dbUser, dbRole.Name);
 
             return Ok(dbUser.ToViewModel());
