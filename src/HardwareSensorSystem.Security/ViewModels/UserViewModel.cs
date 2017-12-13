@@ -28,6 +28,15 @@ namespace HardwareSensorSystem.Security.ViewModels
         public int RoleId { get; set; }
     }
 
+    public class UserUpdateViewModel : UserViewModel
+    {
+        public string CurrentPassword { get; set; }
+
+        public string NewPassword { get; set; }
+
+        public int RoleId { get; set; }
+    }
+
     public static class UserViewModelExtensions
     {
         /// <summary>

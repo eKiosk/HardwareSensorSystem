@@ -55,5 +55,31 @@ namespace HardwareSensorSystem.Security.Controllers
 
             return Ok(dbUser.ToViewModel());
         }
+
+        public async Task<IActionResult> Update(int userId, UserUpdateViewModel user)
+        {
+            var dbRole = await _roleManager.FindByIdAsync(user.RoleId.ToString());
+
+            var dbUser = new ApplicationUser()
+            {
+                Id = userId,
+                UserName = user.UserName,
+                Email = user.Email,
+                ConcurrencyStamp = user.ConcurrencyStamp
+            };
+
+            await _userManager.UpdateAsync(dbUser);
+            await _userManager.ChangePasswordAsync(dbUser, user.ConcurrencyStamp, user.NewPassword);
+
+            await _userManager.AddToRoleAsync(dbUser, dbRole.Name);
+
+            var roleNames = await _userManager.GetRolesAsync(dbUser);
+            foreach (var roleName in roleNames)
+            {
+                await _userManager.RemoveFromRoleAsync(dbUser, roleName);
+            }
+
+            return Ok(dbUser.ToViewModel());
+        }
     }
 }
