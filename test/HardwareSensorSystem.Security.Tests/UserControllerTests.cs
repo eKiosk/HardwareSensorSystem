@@ -185,7 +185,7 @@ namespace HardwareSensorSystem.Security.Tests
                 )).ReturnsAsync(IdentityResult.Success).Verifiable();
             mockUserManager.Setup(userManager => userManager.ChangePasswordAsync(
                     It.IsAny<ApplicationUser>(),
-                    It.IsAny<string>(),
+                    It.Is<string>(password => password.Equals("12345678")),
                     It.IsAny<string>()
                 )).ReturnsAsync(IdentityResult.Success).Verifiable();
 
