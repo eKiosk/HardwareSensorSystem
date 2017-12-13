@@ -76,13 +76,13 @@ namespace HardwareSensorSystem.Security.Controllers
                 await _userManager.AddPasswordAsync(dbUser, user.Password);
             }
 
-            await _userManager.AddToRoleAsync(dbUser, dbRole.Name);
-
             var roleNames = await _userManager.GetRolesAsync(dbUser);
             foreach (var roleName in roleNames)
             {
                 await _userManager.RemoveFromRoleAsync(dbUser, roleName);
             }
+
+            await _userManager.AddToRoleAsync(dbUser, dbRole.Name);
 
             return Ok(dbUser.ToViewModel());
         }

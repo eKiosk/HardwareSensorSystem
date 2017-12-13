@@ -151,7 +151,6 @@ namespace HardwareSensorSystem.Security.Tests
         public async Task Update_WithValidUser_ReturnsUpdatedUser()
         {
             // Arrange
-            var oldRoleName = "OldRoleName";
             var newRole = new ApplicationRole()
             {
                 Id = 10,
@@ -161,6 +160,7 @@ namespace HardwareSensorSystem.Security.Tests
             var userId = 1;
             var userConcurrencyStampOld = "OldUserStamp";
             var userConcurrencyStampNew = "NewUserStamp";
+            var userRoles = new List<string>() { "OldRoleName" };
             var mockUserManager = Setup.GetUserManagerMock();
             var mockRoleManager = Setup.GetRoleManagerMock();
             var controller = new UserController(mockUserManager.Object, mockRoleManager.Object);
@@ -174,15 +174,23 @@ namespace HardwareSensorSystem.Security.Tests
                     return IdentityResult.Success;
                 }).Verifiable();
             mockUserManager.Setup(userManager => userManager.GetRolesAsync(It.IsAny<ApplicationUser>()))
-                .ReturnsAsync(new List<string>() { oldRoleName }).Verifiable();
+                .ReturnsAsync(userRoles.ToList()).Verifiable();
             mockUserManager.Setup(userManager => userManager.RemoveFromRoleAsync(
                     It.IsAny<ApplicationUser>(),
-                    It.Is<string>(roleName => roleName.Equals(oldRoleName))
-                )).ReturnsAsync(IdentityResult.Success).Verifiable();
+                    It.IsAny<string>()
+                )).ReturnsAsync((ApplicationUser appUser, string roleName) =>
+                {
+                    userRoles.Remove(roleName);
+                    return IdentityResult.Success;
+                }).Verifiable();
             mockUserManager.Setup(userManager => userManager.AddToRoleAsync(
                     It.IsAny<ApplicationUser>(),
-                    It.Is<string>(roleName => roleName.Equals(newRole.Name))
-                )).ReturnsAsync(IdentityResult.Success).Verifiable();
+                    It.IsAny<string>()
+                )).ReturnsAsync((ApplicationUser appUser, string roleName) =>
+                {
+                    userRoles.Add(roleName);
+                    return IdentityResult.Success;
+                }).Verifiable();
             mockUserManager.Setup(userManager => userManager.RemovePasswordAsync(It.IsAny<ApplicationUser>()))
                 .ReturnsAsync(IdentityResult.Success).Verifiable();
             mockUserManager.Setup(userManager => userManager.AddPasswordAsync(
@@ -203,6 +211,8 @@ namespace HardwareSensorSystem.Security.Tests
             var okObjectResult = Assert.IsType<OkObjectResult>(result);
             var user = Assert.IsAssignableFrom<UserViewModel>(okObjectResult.Value);
             Assert.Equal(userConcurrencyStampNew, user.ConcurrencyStamp);
+            Assert.Single(userRoles);
+            Assert.Equal(newRole.Name, userRoles.First());
         }
 
         [Fact]
