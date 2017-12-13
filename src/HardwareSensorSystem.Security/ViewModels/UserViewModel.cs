@@ -30,9 +30,7 @@ namespace HardwareSensorSystem.Security.ViewModels
 
     public class UserUpdateViewModel : UserViewModel
     {
-        public string CurrentPassword { get; set; }
-
-        public string NewPassword { get; set; }
+        public string Password { get; set; }
 
         public int RoleId { get; set; }
     }

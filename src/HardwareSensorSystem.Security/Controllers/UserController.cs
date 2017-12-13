@@ -69,7 +69,12 @@ namespace HardwareSensorSystem.Security.Controllers
             };
 
             await _userManager.UpdateAsync(dbUser);
-            await _userManager.ChangePasswordAsync(dbUser, user.CurrentPassword, user.NewPassword);
+
+            if (!string.IsNullOrWhiteSpace(user.Password))
+            {
+                await _userManager.RemovePasswordAsync(dbUser);
+                await _userManager.AddPasswordAsync(dbUser, user.Password);
+            }
 
             await _userManager.AddToRoleAsync(dbUser, dbRole.Name);
 
