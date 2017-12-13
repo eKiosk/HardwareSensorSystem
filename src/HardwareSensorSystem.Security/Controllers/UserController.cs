@@ -45,7 +45,11 @@ namespace HardwareSensorSystem.Security.Controllers
                 Email = user.Email
             };
 
-            await _userManager.CreateAsync(dbUser, user.Password);
+            var identityResult = await _userManager.CreateAsync(dbUser, user.Password);
+            if (!identityResult.Succeeded)
+            {
+                return BadRequest(identityResult.Errors);
+            }
 
             await _userManager.AddToRoleAsync(dbUser, dbRole.Name);
 

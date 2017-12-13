@@ -127,6 +127,26 @@ namespace HardwareSensorSystem.Security.Tests
             Assert.IsType<SerializableError>(badRequestObjectResult.Value);
         }
 
+        [Fact]
+        public async Task Create_WithUnprocessableUser_ReturnsCollectionOfIdentityErrors()
+        {
+            // Arrange
+            var mockUserManager = Setup.GetUserManagerMock();
+            var mockRoleManager = Setup.GetRoleManagerMock();
+            var controller = new UserController(mockUserManager.Object, mockRoleManager.Object);
+            mockRoleManager.Setup(roleManager => roleManager.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(new ApplicationRole());
+            mockUserManager.Setup(userManager => userManager.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
+                .ReturnsAsync(IdentityResult.Failed()).Verifiable();
+
+            // Act
+            var result = await controller.Create(new UserCreateViewModel());
+
+            // Assert
+            mockUserManager.Verify();
+            var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.IsAssignableFrom<IEnumerable<IdentityError>>(badRequestObjectResult.Value);
+        }
+
         private static IEnumerable<ApplicationUser> GetUsers()
         {
             return new List<ApplicationUser>()
