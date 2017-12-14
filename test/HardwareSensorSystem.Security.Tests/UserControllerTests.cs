@@ -247,6 +247,24 @@ namespace HardwareSensorSystem.Security.Tests
             Assert.Equal(testRole.Name, roleName);
         }
 
+        [Fact]
+        public async Task Update_WithInvalidUser_ReturnsModelError()
+        {
+            // Arrange
+            var mockUserManager = Setup.GetUserManagerMock();
+            var mockRoleManager = Setup.GetRoleManagerMock();
+            var controller = new UserController(mockUserManager.Object, mockRoleManager.Object);
+            controller.ModelState.AddModelError("UserName", "Required");
+
+            // Act
+            var result = await controller.Update(1, new UserUpdateViewModel());
+
+            // Assert
+            mockUserManager.Verify(userManager => userManager.UpdateAsync(It.IsAny<ApplicationUser>()), Times.Never());
+            var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.IsType<SerializableError>(badRequestObjectResult.Value);
+        }
+
         private static IEnumerable<ApplicationUser> GetUsers()
         {
             return new List<ApplicationUser>()

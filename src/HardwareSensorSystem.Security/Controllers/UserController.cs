@@ -58,6 +58,11 @@ namespace HardwareSensorSystem.Security.Controllers
 
         public async Task<IActionResult> Update(int userId, UserUpdateViewModel user)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var dbUser = new ApplicationUser()
             {
                 Id = userId,
