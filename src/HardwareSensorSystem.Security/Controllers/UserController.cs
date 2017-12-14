@@ -63,6 +63,17 @@ namespace HardwareSensorSystem.Security.Controllers
                 return BadRequest(ModelState);
             }
 
+            ApplicationRole dbRole = null;
+            if (user.RoleId.HasValue)
+            {
+                dbRole = await _roleManager.FindByIdAsync(user.RoleId.ToString());
+                if (dbRole is null)
+                {
+                    ModelState.AddModelError(nameof(user.RoleId), "Invalid role id.");
+                    return BadRequest(ModelState);
+                }
+            }
+
             var dbUser = new ApplicationUser()
             {
                 Id = userId,
@@ -71,7 +82,11 @@ namespace HardwareSensorSystem.Security.Controllers
                 ConcurrencyStamp = user.ConcurrencyStamp
             };
 
-            await _userManager.UpdateAsync(dbUser);
+            var identityResult = await _userManager.UpdateAsync(dbUser);
+            if (!identityResult.Succeeded)
+            {
+                return BadRequest(identityResult.Errors);
+            }
 
             if (!string.IsNullOrWhiteSpace(user.Password))
             {
@@ -79,15 +94,23 @@ namespace HardwareSensorSystem.Security.Controllers
                 await _userManager.AddPasswordAsync(dbUser, user.Password);
             }
 
-            if (user.RoleId.HasValue)
+            if (dbRole != null)
             {
-                var dbRole = await _roleManager.FindByIdAsync(user.RoleId.ToString());
                 var roleNames = await _userManager.GetRolesAsync(dbUser);
                 await _userManager.RemoveFromRolesAsync(dbUser, roleNames);
                 await _userManager.AddToRoleAsync(dbUser, dbRole.Name);
             }
 
             return Ok(dbUser.ToViewModel());
+        }
+
+        public async Task<IActionResult> Delete([FromRoute]int userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+
+            await _userManager.DeleteAsync(user);
+
+            return Ok();
         }
     }
 }

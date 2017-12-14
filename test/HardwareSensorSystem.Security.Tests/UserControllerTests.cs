@@ -265,6 +265,61 @@ namespace HardwareSensorSystem.Security.Tests
             Assert.IsType<SerializableError>(badRequestObjectResult.Value);
         }
 
+        [Fact]
+        public async Task Update_WithInvalidRoleId_ReturnsModelError()
+        {
+            // Arrange
+            var mockUserManager = Setup.GetUserManagerMock();
+            var mockRoleManager = Setup.GetRoleManagerMock();
+            var controller = new UserController(mockUserManager.Object, mockRoleManager.Object);
+            mockRoleManager.Setup(roleManager => roleManager.FindByIdAsync(It.IsAny<string>())).ReturnsAsync((ApplicationRole)null);
+
+            // Act
+            var result = await controller.Update(1, new UserUpdateViewModel() { RoleId = 1 });
+
+            // Assert
+            mockUserManager.Verify(userManager => userManager.UpdateAsync(It.IsAny<ApplicationUser>()), Times.Never());
+            var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.IsType<SerializableError>(badRequestObjectResult.Value);
+        }
+
+        [Fact]
+        public async Task Update_WithUnprocessableUser_ReturnsCollectionOfIdentityErrors()
+        {
+            // Arrange
+            var mockUserManager = Setup.GetUserManagerMock();
+            var mockRoleManager = Setup.GetRoleManagerMock();
+            var controller = new UserController(mockUserManager.Object, mockRoleManager.Object);
+            mockUserManager.Setup(userManager => userManager.UpdateAsync(It.IsAny<ApplicationUser>()))
+                .ReturnsAsync(IdentityResult.Failed()).Verifiable();
+
+            // Act
+            var result = await controller.Update(1, new UserUpdateViewModel());
+
+            // Assert
+            mockUserManager.Verify();
+            var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.IsAssignableFrom<IEnumerable<IdentityError>>(badRequestObjectResult.Value);
+        }
+
+        [Fact]
+        public async Task Delete_WithUserId_ReturnsOkResult()
+        {
+            // Arrange
+            var mockUserManager = Setup.GetUserManagerMock();
+            var mockRoleManager = Setup.GetRoleManagerMock();
+            var controller = new UserController(mockUserManager.Object, mockRoleManager.Object);
+            mockUserManager.Setup(userManager => userManager.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(new ApplicationUser()).Verifiable();
+            mockUserManager.Setup(userManager => userManager.DeleteAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(IdentityResult.Success).Verifiable();
+
+            // Act
+            var result = await controller.Delete(1);
+
+            // Assert
+            mockUserManager.Verify();
+            Assert.IsType<OkResult>(result);
+        }
+
         private static IEnumerable<ApplicationUser> GetUsers()
         {
             return new List<ApplicationUser>()
