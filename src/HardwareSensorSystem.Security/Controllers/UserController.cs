@@ -19,10 +19,11 @@ namespace HardwareSensorSystem.Security.Controllers
             _roleManager = roleManager;
         }
 
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAllInRole(int roleId)
         {
-            var users = await _userManager.Users.Select(u => u.ToViewModel()).ToListAsync();
-            return Ok(users);
+            var dbRole = await _roleManager.FindByIdAsync(roleId.ToString());
+            var users = await _userManager.GetUsersInRoleAsync(dbRole.Name);
+            return Ok(users.Select(user => user.ToViewModel()));
         }
 
         public async Task<IActionResult> Create(UserCreateViewModel user)

@@ -14,20 +14,27 @@ namespace HardwareSensorSystem.Security.Tests
     public class UserControllerTests
     {
         [Fact]
-        public async Task GetAll_WhenCalled_ReturnsCollectionOfUsersFromUserManager()
+        public async Task GetAllInRole_WithRoleId_ReturnsCollectionOfUsers()
         {
             // Arrange
+            var testRole = new ApplicationRole()
+            {
+                Id = 10,
+                Name = "RoleName",
+                ConcurrencyStamp = "RoleStamp"
+            };
             var testUsers = GetUsers();
             var mockUserManager = Setup.GetUserManagerMock();
             var mockRoleManager = Setup.GetRoleManagerMock();
-            var dbContext = Setup.GetDbContext();
-            dbContext.Users.AddRange(testUsers);
-            dbContext.SaveChanges();
-            mockUserManager.Setup(userManager => userManager.Users).Returns(dbContext.Users);
             var controller = new UserController(mockUserManager.Object, mockRoleManager.Object);
+            mockRoleManager.Setup(roleManager => roleManager.FindByIdAsync(
+                    It.Is<string>(roleId => roleId.Equals(testRole.Id.ToString()))
+                )).ReturnsAsync(testRole);
+            mockUserManager.Setup(userManager => userManager.GetUsersInRoleAsync(It.Is<string>(roleName => roleName.Equals(testRole.Name))))
+                .ReturnsAsync(testUsers.ToList());
 
             // Act
-            var result = await controller.GetAll();
+            var result = await controller.GetAllInRole(testRole.Id);
 
             // Assert
             var okObjectResult = Assert.IsType<OkObjectResult>(result);
