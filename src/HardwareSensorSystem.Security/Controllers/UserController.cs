@@ -58,8 +58,6 @@ namespace HardwareSensorSystem.Security.Controllers
 
         public async Task<IActionResult> Update(int userId, UserUpdateViewModel user)
         {
-            var dbRole = await _roleManager.FindByIdAsync(user.RoleId.ToString());
-
             var dbUser = new ApplicationUser()
             {
                 Id = userId,
@@ -76,13 +74,13 @@ namespace HardwareSensorSystem.Security.Controllers
                 await _userManager.AddPasswordAsync(dbUser, user.Password);
             }
 
-            var roleNames = await _userManager.GetRolesAsync(dbUser);
-            foreach (var roleName in roleNames)
+            if (user.RoleId.HasValue)
             {
-                await _userManager.RemoveFromRoleAsync(dbUser, roleName);
+                var dbRole = await _roleManager.FindByIdAsync(user.RoleId.ToString());
+                var roleNames = await _userManager.GetRolesAsync(dbUser);
+                await _userManager.RemoveFromRolesAsync(dbUser, roleNames);
+                await _userManager.AddToRoleAsync(dbUser, dbRole.Name);
             }
-
-            await _userManager.AddToRoleAsync(dbUser, dbRole.Name);
 
             return Ok(dbUser.ToViewModel());
         }

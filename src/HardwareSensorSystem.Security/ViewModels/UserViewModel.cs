@@ -32,7 +32,7 @@ namespace HardwareSensorSystem.Security.ViewModels
     {
         public string Password { get; set; }
 
-        public int RoleId { get; set; }
+        public int? RoleId { get; set; }
     }
 
     public static class UserViewModelExtensions
