@@ -59,7 +59,7 @@ export class AuthenticationService {
   }
 
   logout() {
-    if (!this.refreshSubscription) {
+    if (this.refreshSubscription) {
       this.refreshSubscription.unsubscribe();
     }
 
@@ -92,7 +92,7 @@ export class AuthenticationService {
       })
     ).subscribe(token => {
       this.setToken(token);
-      if (this.refreshSubscription) {
+      if (!this.refreshSubscription) {
         this.refreshSubscription = interval((token.expiresIn - 120) * 1000).subscribe(() => {
           this.refreshToken();
         });
