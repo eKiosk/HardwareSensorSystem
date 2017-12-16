@@ -1,0 +1,15 @@
+<ng-container *ngIf="form">
+  <form [formGroup]="form">
+    <mat-form-field>
+      <input matInput placeholder="Benutzer" formControlName="userName">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="email" placeholder="Email" formControlName="email">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="password" placeholder="Passwort" formControlName="password">
+    </mat-form-field>
+  </form>
+
+  <button mat-raised-button [disabled]="form.invalid" (click)="save()">Speichern</button>
+</ng-container>

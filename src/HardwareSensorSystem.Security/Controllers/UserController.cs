@@ -2,12 +2,12 @@
 using HardwareSensorSystem.Security.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace HardwareSensorSystem.Security.Controllers
 {
+    [Route("api/users")]
     public class UserController : Controller
     {
         private UserManager<ApplicationUser> _userManager;
@@ -19,14 +19,27 @@ namespace HardwareSensorSystem.Security.Controllers
             _roleManager = roleManager;
         }
 
-        public async Task<IActionResult> GetAllInRole(int roleId)
+        [HttpGet("~/api/roles/{roleId}/users")]
+        [Produces("application/json")]
+        public async Task<IActionResult> GetAllInRole([FromRoute]int roleId)
         {
             var dbRole = await _roleManager.FindByIdAsync(roleId.ToString());
             var users = await _userManager.GetUsersInRoleAsync(dbRole.Name);
             return Ok(users.Select(user => user.ToViewModel()));
         }
 
-        public async Task<IActionResult> Create(UserCreateViewModel user)
+        [HttpGet("{userId}")]
+        [Produces("application/json")]
+        public async Task<IActionResult> GetById([FromRoute]int userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            return Ok(user.ToViewModel());
+        }
+
+        [HttpPost]
+        [Consumes("application/json")]
+        [Produces("application/json")]
+        public async Task<IActionResult> Create([FromBody]UserCreateViewModel user)
         {
             if (!ModelState.IsValid)
             {
@@ -57,7 +70,10 @@ namespace HardwareSensorSystem.Security.Controllers
             return Ok(dbUser.ToViewModel());
         }
 
-        public async Task<IActionResult> Update(int userId, UserUpdateViewModel user)
+        [HttpPut("{userId}")]
+        [Consumes("application/json")]
+        [Produces("application/json")]
+        public async Task<IActionResult> Update([FromRoute]int userId, [FromBody]UserUpdateViewModel user)
         {
             if (!ModelState.IsValid)
             {
@@ -75,13 +91,11 @@ namespace HardwareSensorSystem.Security.Controllers
                 }
             }
 
-            var dbUser = new ApplicationUser()
-            {
-                Id = userId,
-                UserName = user.UserName,
-                Email = user.Email,
-                ConcurrencyStamp = user.ConcurrencyStamp
-            };
+            var dbUser = await _userManager.FindByIdAsync(userId.ToString());
+            dbUser.UserName = user.UserName;
+            dbUser.Email = user.Email;
+            dbUser.SecurityStamp = user.SecurityStamp;
+            dbUser.ConcurrencyStamp = user.ConcurrencyStamp;
 
             var identityResult = await _userManager.UpdateAsync(dbUser);
             if (!identityResult.Succeeded)
@@ -105,6 +119,7 @@ namespace HardwareSensorSystem.Security.Controllers
             return Ok(dbUser.ToViewModel());
         }
 
+        [HttpDelete("{userId}")]
         public async Task<IActionResult> Delete([FromRoute]int userId)
         {
             var user = await _userManager.FindByIdAsync(userId.ToString());

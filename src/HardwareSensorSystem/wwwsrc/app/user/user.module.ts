@@ -19,7 +19,10 @@ import { PermissionService } from './permission.service';
 import { RoleDetailComponent } from './role-detail/role-detail.component';
 import { RoleListComponent } from './role-list/role-list.component';
 import { RoleService } from './role.service';
+import { UserDetailComponent } from './user-detail/user-detail.component';
+import { UserListComponent } from './user-list/user-list.component';
 import { USER_ROUTING } from './user.routing';
+import { UserService } from './user.service';
 
 @NgModule({
   imports: [
@@ -36,13 +39,16 @@ import { USER_ROUTING } from './user.routing';
     MatTableModule
   ],
   declarations: [
-    RoleListComponent,
+    PermissionListComponent,
     RoleDetailComponent,
-    PermissionListComponent
+    RoleListComponent,
+    UserDetailComponent,
+    UserListComponent
   ],
   providers: [
+    PermissionService,
     RoleService,
-    PermissionService
+    UserService
   ]
 })
 export class UserModule {
