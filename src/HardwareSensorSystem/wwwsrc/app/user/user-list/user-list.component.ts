@@ -43,4 +43,12 @@ export class UserListComponent implements OnInit, AfterViewInit {
     this.dataSource.sort = this.sort;
   }
 
+  deleteUser(user: User) {
+    if (confirm(`Delete user '${user.userName}'?`)) {
+      this.userService.delete(user).subscribe(() => {
+        this.dataSource.data = this.dataSource.data.filter(dataUser => dataUser.id !== user.id);
+      });
+    }
+  }
+
 }

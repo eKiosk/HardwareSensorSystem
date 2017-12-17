@@ -20,7 +20,7 @@
       <button mat-icon-button [routerLink]="['/roles', roleId, 'users', user.id]">
         <mat-icon fontSet="fontawesome" fontIcon="fa-pencil-square-o"></mat-icon>
       </button>
-      <button mat-icon-button>
+      <button mat-icon-button (click)="deleteUser(user)">
         <mat-icon fontSet="fontawesome" fontIcon="fa-trash-o"></mat-icon>
       </button>
     </mat-cell>
