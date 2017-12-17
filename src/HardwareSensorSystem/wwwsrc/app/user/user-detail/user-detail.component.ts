@@ -64,8 +64,6 @@ export class UserDetailComponent {
       userName: [user.userName, [Validators.required, Validators.minLength(5)]],
       email: [user.email, [Validators.required, Validators.email]],
       password: ['', Validators.minLength(8)],
-      roleId: [undefined],
-      securityStamp: [user.securityStamp],
       concurrencyStamp: [user.concurrencyStamp]
     });
   }

@@ -16,8 +16,6 @@ namespace HardwareSensorSystem.Security.ViewModels
         [Required]
         public string Email { get; set; }
 
-        public string SecurityStamp { get; set; }
-
         public string ConcurrencyStamp { get; set; }
     }
 
@@ -51,7 +49,6 @@ namespace HardwareSensorSystem.Security.ViewModels
                 Id = appUser.Id,
                 UserName = appUser.UserName,
                 Email = appUser.Email,
-                SecurityStamp = appUser.SecurityStamp,
                 ConcurrencyStamp = appUser.ConcurrencyStamp
             };
         }

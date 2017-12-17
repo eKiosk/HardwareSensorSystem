@@ -94,7 +94,6 @@ namespace HardwareSensorSystem.Security.Controllers
             var dbUser = await _userManager.FindByIdAsync(userId.ToString());
             dbUser.UserName = user.UserName;
             dbUser.Email = user.Email;
-            dbUser.SecurityStamp = user.SecurityStamp;
             dbUser.ConcurrencyStamp = user.ConcurrencyStamp;
 
             var identityResult = await _userManager.UpdateAsync(dbUser);

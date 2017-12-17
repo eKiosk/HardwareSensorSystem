@@ -58,7 +58,6 @@ namespace HardwareSensorSystem.Security.Tests
                 Id = 10,
                 UserName = "UserName",
                 Email = "user@example.com",
-                SecurityStamp = "UserSecurityStamp",
                 ConcurrencyStamp = "UserStamp"
             };
             var mockUserManager = Setup.GetUserManagerMock();
@@ -77,7 +76,6 @@ namespace HardwareSensorSystem.Security.Tests
             Assert.Equal(testUser.Id, user.Id);
             Assert.Equal(testUser.UserName, user.UserName);
             Assert.Equal(testUser.Email, user.Email);
-            Assert.Equal(testUser.SecurityStamp, user.SecurityStamp);
             Assert.Equal(testUser.ConcurrencyStamp, user.ConcurrencyStamp);
         }
 
