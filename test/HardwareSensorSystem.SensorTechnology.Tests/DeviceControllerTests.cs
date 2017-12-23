@@ -3,6 +3,8 @@ using HardwareSensorSystem.SensorTechnology.Models;
 using HardwareSensorSystem.SensorTechnology.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -10,6 +12,54 @@ namespace HardwareSensorSystem.SensorTechnology.Tests
 {
     public class DeviceControllerTests
     {
+        [Fact]
+        public async Task GetAll_WhenCalled_ReturnsCollectionOfDevices()
+        {
+            // Arrange
+            var testDevices = GetDevices();
+            var dbContext = Setup.GetDbContext();
+            dbContext.Devices.AddRange(testDevices);
+            dbContext.SaveChanges();
+            var controller = new DeviceController(dbContext);
+
+            // Act
+            var result = await controller.GetAll();
+
+            // Assert
+            var okObjectResult = Assert.IsType<OkObjectResult>(result);
+            var devices = Assert.IsAssignableFrom<IEnumerable<DeviceViewModel>>(okObjectResult.Value);
+            Assert.All(testDevices, testDevice =>
+            {
+                var device = devices.SingleOrDefault(d => d.Id == testDevice.Id);
+                Assert.NotNull(device);
+                Assert.Equal(testDevice.Name, device.Name);
+            });
+        }
+
+        [Fact]
+        public async Task GetById_WithDeviceId_ReturnsDevice()
+        {
+            // Arrange
+            var testDevice = new Device()
+            {
+                Id = 10,
+                Name = "DeviceName"
+            };
+            var dbContext = Setup.GetDbContext();
+            dbContext.Devices.Add(testDevice);
+            dbContext.SaveChanges();
+            var controller = new DeviceController(dbContext);
+
+            // Act
+            var result = await controller.GetById(testDevice.Id);
+
+            // Assert
+            var okObjectResult = Assert.IsType<OkObjectResult>(result);
+            var device = Assert.IsAssignableFrom<DeviceViewModel>(okObjectResult.Value);
+            Assert.Equal(testDevice.Id, device.Id);
+            Assert.Equal(testDevice.Name, device.Name);
+        }
+
         [Fact]
         public async Task Create_WithValidDevice_ReturnsCreatedDevice()
         {
@@ -111,6 +161,28 @@ namespace HardwareSensorSystem.SensorTechnology.Tests
             // Assert
             Assert.IsType<OkResult>(result);
             Assert.Empty(dbContext.Devices);
+        }
+
+        private static IEnumerable<Device> GetDevices()
+        {
+            return new List<Device>()
+            {
+                new Device()
+                {
+                    Id=1,
+                    Name="Device_1"
+                },
+                new Device()
+                {
+                    Id=2,
+                    Name="Device_2"
+                },
+                new Device()
+                {
+                    Id=3,
+                    Name="Device_3"
+                }
+            };
         }
     }
 }
