@@ -12,11 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <DotNetCliToolReference Include="Microsoft.DotNet.Watcher.Tools" Version="2.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\HardwareSensorSystem.Security\HardwareSensorSystem.Security.csproj" />
+    <ProjectReference Include="..\..\src\HardwareSensorSystem.SensorTechnology\HardwareSensorSystem.SensorTechnology.csproj" />
   </ItemGroup>
 
 </Project>
