@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace HardwareSensorSystem.SensorTechnology.Models
+﻿namespace HardwareSensorSystem.SensorTechnology.Models
 {
     public class Device
     {

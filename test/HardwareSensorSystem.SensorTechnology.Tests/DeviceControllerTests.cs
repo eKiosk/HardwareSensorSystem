@@ -169,18 +169,18 @@ namespace HardwareSensorSystem.SensorTechnology.Tests
             {
                 new Device()
                 {
-                    Id=1,
-                    Name="Device_1"
+                    Id = 1,
+                    Name = "Device_1"
                 },
                 new Device()
                 {
-                    Id=2,
-                    Name="Device_2"
+                    Id = 2,
+                    Name = "Device_2"
                 },
                 new Device()
                 {
-                    Id=3,
-                    Name="Device_3"
+                    Id = 3,
+                    Name = "Device_3"
                 }
             };
         }
