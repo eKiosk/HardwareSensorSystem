@@ -40,7 +40,7 @@ namespace HardwareSensorSystem.Security.ViewModels
         /// <summary>
         /// Convert an <see cref="ApplicationUser"/> to its view model.
         /// </summary>
-        /// <param name="appRole">The user.</param>
+        /// <param name="appUser">The user.</param>
         /// <returns>A view model of the user.</returns>
         public static UserViewModel ToViewModel(this ApplicationUser appUser)
         {

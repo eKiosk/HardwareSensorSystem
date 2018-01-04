@@ -20,11 +20,12 @@ namespace HardwareSensorSystem.Security.Models
 
             builder.Entity<ApplicationPermission>(b =>
             {
-                b.HasKey(p => p.Id);
-                b.HasIndex(p => p.Name).HasName("PermissionNameIndex").IsUnique();
                 b.ToTable("Permissions");
 
+                b.HasKey(p => p.Id);
                 b.Property(p => p.Name).HasMaxLength(256);
+
+                b.HasIndex(p => p.Name).HasName("PermissionNameIndex").IsUnique();
             });
         }
     }
