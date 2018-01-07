@@ -48,6 +48,11 @@ namespace HardwareSensorSystem.SensorTechnology.Controllers
         [Produces("application/json")]
         public async Task<IActionResult> Create([FromBody]SensorViewModel sensor)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var dbSensor = new Sensor()
             {
                 DeviceId = sensor.DeviceId,
@@ -55,25 +60,67 @@ namespace HardwareSensorSystem.SensorTechnology.Controllers
             };
 
             _context.Sensors.Add(dbSensor);
+
+            var sensorProperties = sensor.Properties.Select(sp => new SensorProperty()
+            {
+                SensorId = dbSensor.Id,
+                Name = sp.Name,
+                Value = sp.Value
+            });
+            _context.SensorProperties.AddRange(sensorProperties);
+
             await _context.SaveChangesAsync();
 
-            foreach (var property in sensor.Properties)
-            {
-                var dbProperty = new SensorProperty()
-                {
-                    SensorId = dbSensor.Id,
-                    Name = property.Name,
-                    Value = property.Value
-                };
-                _context.SensorProperties.Add(dbProperty);
-                await _context.SaveChangesAsync();
-            }
-
-            var sensorProperties = _context.SensorProperties.Where(sp => sp.SensorId.Equals(dbSensor.Id));
             var sensorModel = dbSensor.ToViewModel();
             sensorModel.Properties = sensorProperties.Select(sp => sp.ToViewModel());
 
             return Ok(sensorModel);
+        }
+
+        [HttpPut("{sensorId}")]
+        [Consumes("application/json")]
+        [Produces("application/json")]
+        public async Task<IActionResult> Update([FromRoute]int sensorId, [FromBody]SensorViewModel sensor)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var dbSensor = new Sensor()
+            {
+                Id = sensorId,
+                DeviceId = sensor.DeviceId,
+                Name = sensor.Name
+            };
+
+            _context.Sensors.Update(dbSensor);
+
+            var sensorProperties = sensor.Properties.Select(sp => new SensorProperty()
+            {
+                SensorId = dbSensor.Id,
+                Name = sp.Name,
+                Value = sp.Value
+            });
+            _context.SensorProperties.RemoveRange(_context.SensorProperties.Where(sp => sp.SensorId.Equals(sensorId)));
+            _context.SensorProperties.AddRange(sensorProperties);
+
+            await _context.SaveChangesAsync();
+
+            var sensorModel = dbSensor.ToViewModel();
+            sensorModel.Properties = sensorProperties.Select(sp => sp.ToViewModel());
+
+            return Ok(sensorModel);
+        }
+
+        [HttpDelete("{sensorId}")]
+        public async Task<IActionResult> Delete([FromRoute]int sensorId)
+        {
+            var dbSensor = _context.Sensors.SingleOrDefault(d => d.Id.Equals(sensorId));
+            _context.Sensors.Remove(dbSensor);
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
     }
 }

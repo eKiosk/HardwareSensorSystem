@@ -137,7 +137,6 @@ namespace HardwareSensorSystem.SensorTechnology.Tests
             // Assert
             var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
             Assert.IsType<SerializableError>(badRequestObjectResult.Value);
-            Assert.Empty(dbContext.Devices);
         }
 
         [Fact]
