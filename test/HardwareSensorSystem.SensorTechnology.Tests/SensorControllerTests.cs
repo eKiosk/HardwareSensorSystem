@@ -98,6 +98,42 @@ namespace HardwareSensorSystem.SensorTechnology.Tests
             Assert.IsType<NotFoundResult>(result);
         }
 
+        [Fact]
+        public async Task Create_WithValidSensor_ReturnsCreatedSensor()
+        {
+            // Arrange
+            var testSensor = new SensorViewModel()
+            {
+                DeviceId = 1,
+                Name = "TestSensor",
+                Properties = new List<SensorPropertyViewModel>()
+                {
+                    new SensorPropertyViewModel()
+                    {
+                        Name = "Property",
+                        Value = "JSDH6H"
+                    }
+                }
+            };
+            var dbContext = Setup.GetDbContext();
+            var controller = new SensorController(dbContext);
+
+            // Act
+            var result = await controller.Create(testSensor);
+
+            // Assert
+            var okObjectResult = Assert.IsType<OkObjectResult>(result);
+            var sensor = Assert.IsAssignableFrom<SensorViewModel>(okObjectResult.Value);
+            Assert.Equal(1, sensor.Id);
+            Assert.Equal(testSensor.Name, sensor.Name);
+            Assert.All(testSensor.Properties, testSensorProperty =>
+            {
+                var sensorProperty = sensor.Properties.SingleOrDefault(sp => sp.Name.Equals(testSensorProperty.Name));
+                Assert.NotNull(sensorProperty);
+                Assert.Equal(testSensorProperty.Value, sensorProperty.Value);
+            });
+        }
+
         private static IEnumerable<Sensor> GetSensors()
         {
             return new List<Sensor>()
