@@ -43,7 +43,7 @@ namespace HardwareSensorSystem.SensorTechnology.Models
                 b.HasKey(s => s.Id);
                 b.Property(s => s.Name).HasMaxLength(256);
 
-                b.HasIndex(s => s.DeviceId).ForSqlServerIsClustered().HasName("SensorDeviceIndex");
+                b.HasIndex(s => s.DeviceId).HasName("SensorDeviceIndex");
                 b.HasOne<Device>().WithMany().IsRequired().OnDelete(DeleteBehavior.Cascade);
             });
 
@@ -55,7 +55,7 @@ namespace HardwareSensorSystem.SensorTechnology.Models
                 b.Property(sp => sp.Name).HasMaxLength(256);
                 b.Property(sp => sp.Value).HasMaxLength(256);
 
-                b.HasIndex(s => s.SensorId).ForSqlServerIsClustered().HasName("SensorPropertySensorIndex");
+                b.HasIndex(s => s.SensorId).HasName("SensorPropertySensorIndex");
                 b.HasOne<Sensor>().WithMany().IsRequired().OnDelete(DeleteBehavior.Cascade);
             });
         }
