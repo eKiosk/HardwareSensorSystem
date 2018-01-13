@@ -227,7 +227,7 @@ namespace HardwareSensorSystem.SensorTechnology.Tests
         }
 
         [Fact]
-        public async Task Delete_WithDeviceId_ReturnsOkResult()
+        public async Task Delete_WithSensorId_ReturnsOkResult()
         {
             // Arrange
             var dbContext = Setup.GetDbContext();
