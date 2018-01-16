@@ -18,6 +18,9 @@ import { DeviceDetailComponent } from './device-detail/device-detail.component';
 import { DeviceListComponent } from './device-list/device-list.component';
 import { DEVICE_ROUTES } from './device.routing';
 import { DeviceService } from './device.service';
+import { SensorDetailComponent } from './sensor-detail/sensor-detail.component';
+import { SensorListComponent } from './sensor-list/sensor-list.component';
+import { SensorService } from './sensor.service';
 
 @NgModule({
   imports: [
@@ -35,10 +38,13 @@ import { DeviceService } from './device.service';
   ],
   declarations: [
     DeviceListComponent,
-    DeviceDetailComponent
+    DeviceDetailComponent,
+    SensorListComponent,
+    SensorDetailComponent
   ],
   providers: [
-    DeviceService
+    DeviceService,
+    SensorService
   ]
 })
 export class DeviceModule {

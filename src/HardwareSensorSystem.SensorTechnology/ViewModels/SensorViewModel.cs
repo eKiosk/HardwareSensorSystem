@@ -6,7 +6,7 @@ namespace HardwareSensorSystem.SensorTechnology.ViewModels
 {
     public class SensorViewModel
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         [Required]
         public int DeviceId { get; set; }

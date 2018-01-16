@@ -17,7 +17,7 @@ namespace HardwareSensorSystem.SensorTechnology.Controllers
             _context = context;
         }
 
-        [HttpGet("~/devices/{deviceId}/sensors")]
+        [HttpGet("~/api/devices/{deviceId}/sensors")]
         [Produces("application/json")]
         public async Task<IActionResult> GetAllInDevice([FromRoute]int deviceId)
         {

@@ -6,6 +6,8 @@ import { _throw } from 'rxjs/observable/throw';
 import { catchError, map } from 'rxjs/operators';
 import { noop } from 'rxjs/util/noop';
 
+import { environment } from '../../environments/environment';
+
 @Injectable()
 export class AuthenticationService {
 
@@ -16,6 +18,7 @@ export class AuthenticationService {
     oauthService.clientId = 'hardwaresensorsystem';
     oauthService.scope = 'offline_access';
     oauthService.setStorage(sessionStorage);
+    oauthService.requireHttps = environment.production;
 
     if (oauthService.getRefreshToken()) {
       oauthService.refreshToken();

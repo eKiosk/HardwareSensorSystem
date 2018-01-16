@@ -1,24 +1,22 @@
 <div class="bar">
-  <button mat-raised-button [routerLink]="['/devices', 'new']">Hinzufügen</button>
+  <button mat-raised-button [routerLink]="['/devices']">Zurück</button>
+  <button mat-raised-button [routerLink]="['/devices', deviceId, 'sensors', 'new']">Hinzufügen</button>
 </div>
 
 <mat-table [dataSource]="dataSource" matSort>
   <ng-container matColumnDef="name">
     <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
-    <mat-cell *matCellDef="let device">{{ device.name }}</mat-cell>
+    <mat-cell *matCellDef="let sensor">{{ sensor.name }}</mat-cell>
   </ng-container>
 
   <ng-container matColumnDef="actions">
     <mat-header-cell *matHeaderCellDef></mat-header-cell>
-    <mat-cell *matCellDef="let device">
-      <button mat-icon-button [routerLink]="['/devices', device.id]">
+    <mat-cell *matCellDef="let sensor">
+      <button mat-icon-button [routerLink]="['/devices', deviceId, 'sensors', sensor.id]">
         <mat-icon fontSet="fontawesome" fontIcon="fa-pencil-square-o"></mat-icon>
       </button>
-      <button mat-icon-button (click)="deleteDevice(device)">
+      <button mat-icon-button (click)="deleteSensor(sensor)">
         <mat-icon fontSet="fontawesome" fontIcon="fa-trash-o"></mat-icon>
-      </button>
-      <button mat-icon-button [routerLink]="['/devices', device.id, 'sensors']">
-        <mat-icon fontSet="fontawesome" fontIcon="fa-thermometer-half"></mat-icon>
       </button>
     </mat-cell>
   </ng-container>
