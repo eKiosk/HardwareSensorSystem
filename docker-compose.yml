@@ -6,8 +6,11 @@ services:
     ports:
       - 1433:1433
     volumes:
-      - ./tmp:/var/opt/mssql
+      - db:/var/opt/mssql
     environment:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=msSql_password
       - MSSQL_PID=Developer
+
+volumes:
+  db:

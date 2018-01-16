@@ -10,7 +10,11 @@ $ docker-compose up -d
 
 ### Notice
 
-To remove database data, delete all files and folders in the `tmp` directory except `.gitignore`.
+To remove database data, execute command
+
+```
+$ docker rm hardwaresensorsystem_db
+```
 
 ## Entity Framework Core migrations
 
