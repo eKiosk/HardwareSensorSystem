@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Validators } from '@angular/forms';
+import { FormArray } from '@angular/forms/src/model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
@@ -36,6 +37,10 @@ export class SensorDetailComponent {
     });
   }
 
+  get propertiesForm(): FormArray {
+    return this.form.get('properties') as FormArray;
+  }
+
   save() {
     let request: Observable<Sensor>;
 
@@ -50,13 +55,37 @@ export class SensorDetailComponent {
     });
   }
 
+  addEmptyProperty() {
+    this.addProperty(this.form, '', '');
+  }
+
+  deleteProperty(propertyIndex: number) {
+    this.propertiesForm.removeAt(propertyIndex);
+  }
+
   private buildForm(deviceId: number, sensor?: Sensor): FormGroup {
-    return this.formBuilder.group({
+    const form = this.formBuilder.group({
       id: [sensor ? sensor.id : undefined],
       name: [sensor ? sensor.name : '', Validators.required],
       deviceId: [deviceId],
       properties: this.formBuilder.array([])
     });
+
+    if (sensor) {
+      for (const property of sensor.properties) {
+        this.addProperty(form, property.name, property.value);
+      }
+    }
+
+    return form;
+  }
+
+  private addProperty(form: FormGroup, name: String, value: String) {
+    const properties = <FormArray>form.get('properties');
+    properties.push(this.formBuilder.group({
+      name: [name, Validators.required],
+      value: [value]
+    }));
   }
 
 }

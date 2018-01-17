@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import {
   MatButtonModule,
@@ -27,6 +28,7 @@ import { SensorService } from './sensor.service';
     CommonModule,
     RouterModule.forChild(DEVICE_ROUTES),
     ReactiveFormsModule,
+    FlexLayoutModule,
     MatButtonModule,
     MatFormFieldModule,
     MatIconModule,

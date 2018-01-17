@@ -1,9 +1,27 @@
 <ng-container *ngIf="form">
   <form [formGroup]="form">
     <mat-form-field>
-      <input matInput placeholder="Name" formControlName="name">
+      <input matInput placeholder="Sensorname" formControlName="name">
     </mat-form-field>
+
+    <div formArrayName="properties" *ngFor="let property of propertiesForm.controls; let i = index;">
+      <div [formGroupName]="i">
+        <mat-form-field fxFlex>
+          <input matInput placeholder="Name der Eigenschaft" formControlName="name">
+        </mat-form-field>
+        <mat-form-field fxFlex fxFlexOffset="40px">
+          <input matInput placeholder="Wert" formControlName="value">
+        </mat-form-field>
+        <button mat-icon-button (click)="deleteProperty(i)" fxFlexAlign="center">
+          <mat-icon fontSet="fontawesome" fontIcon="fa-minus-circle"></mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <button mat-raised-button (click)="addEmptyProperty()">Eigenschaft hinzufügen</button>
   </form>
+
+  <br>
 
   <button mat-raised-button [disabled]="form.invalid" (click)="save()">Speichern</button>
 </ng-container>
