@@ -80,7 +80,7 @@ export class SensorDetailComponent {
     return form;
   }
 
-  private addProperty(form: FormGroup, name: String, value: String) {
+  private addProperty(form: FormGroup, name: string, value: string) {
     const properties = <FormArray>form.get('properties');
     properties.push(this.formBuilder.group({
       name: [name, Validators.required],
