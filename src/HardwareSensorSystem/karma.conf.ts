@@ -1,6 +1,8 @@
 // Karma configuration file, see link for more information
 // https://karma-runner.github.io/1.0/config/configuration-file.html
 
+process.env.CHROME_BIN = require('puppeteer').executeablePath();
+
 module.exports = function (config) {
   config.set({
     basePath: '',
@@ -12,11 +14,11 @@ module.exports = function (config) {
       require('karma-coverage-istanbul-reporter'),
       require('@angular/cli/plugins/karma')
     ],
-    client:{
+    client: {
       clearContext: false // leave Jasmine Spec Runner output visible in browser
     },
     coverageIstanbulReporter: {
-      reports: [ 'html', 'lcovonly' ],
+      reports: ['html', 'lcovonly'],
       fixWebpackSourcePaths: true
     },
     angularCli: {
