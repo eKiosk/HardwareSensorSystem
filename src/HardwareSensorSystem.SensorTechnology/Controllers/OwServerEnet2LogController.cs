@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using HardwareSensorSystem.SensorTechnology.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +13,15 @@ namespace HardwareSensorSystem.SensorTechnology.Controllers
 {
     public class OwServerEnet2LogController : Controller
     {
+        private SensorTechnologyDbContext _context;
+
+        public OwServerEnet2LogController(SensorTechnologyDbContext context)
+        {
+            _context = context;
+        }
+
         [AllowAnonymous]
-        [HttpPost("api/devices/{deviceId}/log")]
+        [HttpPost("api/devices/{deviceId}/log/ow-server-enet")]
         public async Task<IActionResult> Log([FromRoute]int deviceId)
         {
             XDocument file = XDocument.Load(HttpContext.Request.Body);
@@ -23,6 +32,33 @@ namespace HardwareSensorSystem.SensorTechnology.Controllers
                 SerialNumber = sensor.Element(romIdName).Value,
                 Data = sensor.Elements().Where(element => element != sensor.Element(romIdName))
             });
+
+            var groupedProperties = await _context.Sensors.Where(sensor => sensor.DeviceId.Equals(deviceId))
+                .Join(_context.SensorProperties
+                          .Where(property => property.Name.Equals("SENSOR_ID"))
+                          .Where(property => dataSensors.Any(e => e.SerialNumber.Equals(property.Value))),
+                      sensor => sensor.Id,
+                      property => property.SensorId,
+                      (sensor, _) => sensor)
+                .GroupJoin(_context.SensorProperties,
+                           sensor => sensor.Id,
+                           property => property.SensorId,
+                           (_, properties) => properties)
+                .ToListAsync();
+
+            foreach (var properties in groupedProperties)
+            {
+                var serialNumber = properties.Single(property => property.Name.Equals("SENSOR_ID")).Value;
+
+                try
+                {
+                    var data = dataSensors.Single(e => e.SerialNumber.Equals(serialNumber)).Data;
+                }
+                catch
+                {
+
+                }
+            }
 
             return Ok();
         }
