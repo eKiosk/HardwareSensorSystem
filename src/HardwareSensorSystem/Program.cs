@@ -1,5 +1,9 @@
+using HardwareSensorSystem.Security.Models;
+using HardwareSensorSystem.SensorTechnology.Models;
+using IdentityServer4.EntityFramework.DbContexts;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -10,6 +14,8 @@ namespace HardwareSensorSystem
 {
     public class Program
     {
+        protected Program() { }
+
         public static void Main(string[] args)
         {
             var host = BuildWebHost(args);
@@ -17,15 +23,35 @@ namespace HardwareSensorSystem
             using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
+                var configuration = services.GetService<IConfiguration>();
 
-                try
+                if (configuration.GetValue<bool>("DATABASE_MIGRATE"))
                 {
-                    Security.Database.Initialize(services);
+                    try
+                    {
+                        services.GetService<ApplicationDbContext>().Database.Migrate();
+                        services.GetService<ConfigurationDbContext>().Database.Migrate();
+                        services.GetService<PersistedGrantDbContext>().Database.Migrate();
+                        services.GetService<SensorTechnologyDbContext>().Database.Migrate();
+                    }
+                    catch (Exception ex)
+                    {
+                        var logger = services.GetRequiredService<ILogger<Program>>();
+                        logger.LogError(ex, "An error occurred migrating the database.");
+                    }
                 }
-                catch (Exception ex)
+
+                if (configuration.GetValue<bool>("DATABASE_SEED"))
                 {
-                    var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred seeding the database.");
+                    try
+                    {
+                        Security.Database.Initialize(services);
+                    }
+                    catch (Exception ex)
+                    {
+                        var logger = services.GetRequiredService<ILogger<Program>>();
+                        logger.LogError(ex, "An error occurred seeding the database.");
+                    }
                 }
             }
 
@@ -40,7 +66,9 @@ namespace HardwareSensorSystem
                     var defaults = new Dictionary<string, string>
                     {
                         {"AUTHORITY", "http://localhost:5000/"},
-                        {"DATABASE", "Server=localhost;Database=tempdb;User Id=sa;Password=msSql_password;"}
+                        {"DATABASE", "Server=localhost;Database=tempdb;User Id=sa;Password=msSql_password;"},
+                        {"DATABASE_MIGRATE", "False"},
+                        {"DATABASE_SEED", "False"}
                     };
                     config.AddInMemoryCollection(defaults);
 

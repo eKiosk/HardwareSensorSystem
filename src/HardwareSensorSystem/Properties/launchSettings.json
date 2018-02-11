@@ -14,7 +14,9 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "AUTHORITY": "http://localhost:5000/",
-        "DATABASE": "Server=localhost;Database=tempdb;User Id=sa;Password=msSql_password;"
+        "DATABASE": "Server=localhost;Database=tempdb;User Id=sa;Password=msSql_password;",
+        "DATABASE_MIGRATE": "True",
+        "DATABASE_SEED": "True"
       }
     }
   }
