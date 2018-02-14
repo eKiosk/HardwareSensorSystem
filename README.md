@@ -13,7 +13,7 @@ $ docker-compose up -d
 To remove database data, execute command
 
 ```
-$ docker rm hardwaresensorsystem_db
+$ docker volume rm hardwaresensorsystem_db
 ```
 
 ## Entity Framework Core migrations
@@ -27,7 +27,7 @@ $ dotnet ef migrations add InitialCreate --context PersistedGrantDbContext --out
 $ dotnet ef migrations add InitialCreate --context SensorTechnologyDbContext --output-dir Migrations\SensorTechnologyDb
 ```
 
-To update the database to the migrations, run the following commands
+To manually update the database to the migrations, run the following commands
 
 ```
 $ dotnet ef database update --context ApplicationDbContext
