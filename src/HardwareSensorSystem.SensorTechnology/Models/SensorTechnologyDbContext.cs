@@ -38,9 +38,9 @@ namespace HardwareSensorSystem.SensorTechnology.Models
         /// </summary>
         public DbSet<MeasuredValuePerWeek> MeasuredValuesPerWeek { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder builder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            builder.Entity<Device>(b =>
+            modelBuilder.Entity<Device>(b =>
             {
                 b.ToTable("Devices");
 
@@ -51,7 +51,7 @@ namespace HardwareSensorSystem.SensorTechnology.Models
                 b.HasIndex(d => d.NormalizedName).IsUnique().HasName("DeviceNameIndex");
             });
 
-            builder.Entity<Sensor>(b =>
+            modelBuilder.Entity<Sensor>(b =>
             {
                 b.ToTable("Sensors");
 
@@ -62,7 +62,7 @@ namespace HardwareSensorSystem.SensorTechnology.Models
                 b.HasOne<Device>().WithMany().IsRequired().OnDelete(DeleteBehavior.Cascade);
             });
 
-            builder.Entity<SensorProperty>(b =>
+            modelBuilder.Entity<SensorProperty>(b =>
             {
                 b.ToTable("SensorProperties");
 
@@ -74,7 +74,7 @@ namespace HardwareSensorSystem.SensorTechnology.Models
                 b.HasOne<Sensor>().WithMany().IsRequired().OnDelete(DeleteBehavior.Cascade);
             });
 
-            builder.Entity<MeasuredValue>(b =>
+            modelBuilder.Entity<MeasuredValue>(b =>
             {
                 b.ToTable("MeasuredValues");
 
@@ -83,7 +83,7 @@ namespace HardwareSensorSystem.SensorTechnology.Models
                 b.HasOne<Sensor>().WithMany().IsRequired().OnDelete(DeleteBehavior.Cascade);
             });
 
-            builder.Entity<MeasuredValuePerDay>(b =>
+            modelBuilder.Entity<MeasuredValuePerDay>(b =>
             {
                 b.ToTable("MeasuredValuesPerDay");
 
@@ -92,7 +92,7 @@ namespace HardwareSensorSystem.SensorTechnology.Models
                 b.HasOne<Sensor>().WithMany().IsRequired().OnDelete(DeleteBehavior.Cascade);
             });
 
-            builder.Entity<MeasuredValuePerWeek>(b =>
+            modelBuilder.Entity<MeasuredValuePerWeek>(b =>
             {
                 b.ToTable("MeasuredValuesPerWeek");
 
