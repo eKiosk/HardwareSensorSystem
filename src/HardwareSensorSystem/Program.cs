@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
+using System.IO;
 
 namespace HardwareSensorSystem
 {
@@ -63,16 +63,9 @@ namespace HardwareSensorSystem
                 .UseStartup<Startup>()
                 .ConfigureAppConfiguration(config =>
                 {
-                    var defaults = new Dictionary<string, string>
-                    {
-                        {"AUTHORITY", "http://localhost:5000/"},
-                        {"DATABASE", "Server=localhost;Database=tempdb;User Id=sa;Password=msSql_password;"},
-                        {"DATABASE_MIGRATE", "False"},
-                        {"DATABASE_SEED", "False"}
-                    };
-                    config.AddInMemoryCollection(defaults);
-
-                    config.AddEnvironmentVariables();
+                    config.SetBasePath(Directory.GetCurrentDirectory())
+                          .AddJsonFile("appsettings.json", true)
+                          .AddEnvironmentVariables();
                 })
                 .Build();
     }
