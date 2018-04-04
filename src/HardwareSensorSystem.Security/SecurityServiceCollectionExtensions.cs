@@ -13,14 +13,6 @@ namespace Microsoft.AspNetCore.Builder
     {
         public static void AddSecuriy(this IServiceCollection services, IConfiguration configuration, Action<DbContextOptionsBuilder> dbContextOptionsAction)
         {
-            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
-                .AddIdentityServerAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme, options =>
-                    {
-                        options.Authority = configuration.GetValue<string>("AUTHORITY");
-                        options.RequireHttpsMetadata = false;
-                        options.SupportedTokens = SupportedTokens.Jwt;
-                    });
-
             services.AddDbContext<ApplicationDbContext>(dbContextOptionsAction);
 
             services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
@@ -47,6 +39,18 @@ namespace Microsoft.AspNetCore.Builder
                 .AddOperationalStore(storeOptions =>
                 {
                     storeOptions.ConfigureDbContext = dbContextOptionsAction;
+                });
+
+            services.AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+                })
+                .AddIdentityServerAuthentication(options =>
+                {
+                    options.Authority = configuration.GetValue<string>("AUTHORITY");
+                    options.RequireHttpsMetadata = false;
+                    options.SupportedTokens = SupportedTokens.Jwt;
                 });
         }
     }

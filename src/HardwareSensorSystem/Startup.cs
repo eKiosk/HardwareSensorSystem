@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,7 +33,12 @@ namespace HardwareSensorSystem
                 options.UseSqlServer(_configuration.GetValue<string>("DATABASE"), b => b.MigrationsAssembly("HardwareSensorSystem"));
             });
 
-            services.AddMvc();
+            services.AddMvc(options =>
+                {
+                    var authorizationPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+                    options.Filters.Add(new AuthorizeFilter(authorizationPolicy));
+                }
+            );
         }
 
         /// <summary>
