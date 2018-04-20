@@ -10,7 +10,7 @@ namespace HardwareSensorSystem.Security.Controllers
     [Route("api/permissions")]
     public class PermissionController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public PermissionController(ApplicationDbContext context)
         {

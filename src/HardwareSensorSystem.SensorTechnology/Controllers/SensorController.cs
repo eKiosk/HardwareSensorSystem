@@ -10,7 +10,7 @@ namespace HardwareSensorSystem.SensorTechnology.Controllers
     [Route("api/sensors")]
     public class SensorController : Controller
     {
-        private SensorTechnologyDbContext _context;
+        private readonly SensorTechnologyDbContext _context;
 
         public SensorController(SensorTechnologyDbContext context)
         {

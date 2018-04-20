@@ -13,7 +13,7 @@ namespace HardwareSensorSystem.SensorTechnology.Models
 
     public static class Quantities
     {
-        private static readonly ICollection<Quantity> _values = new List<Quantity>
+        private static readonly ICollection<Quantity> Values = new List<Quantity>
         {
             new Quantity
             {
@@ -37,7 +37,7 @@ namespace HardwareSensorSystem.SensorTechnology.Models
 
         public static ICollection<Quantity> Get()
         {
-            return _values;
+            return Values;
         }
     }
 }

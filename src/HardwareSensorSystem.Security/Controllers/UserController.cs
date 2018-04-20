@@ -10,8 +10,8 @@ namespace HardwareSensorSystem.Security.Controllers
     [Route("api/users")]
     public class UserController : Controller
     {
-        private UserManager<ApplicationUser> _userManager;
-        private RoleManager<ApplicationRole> _roleManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
 
         public UserController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
         {

@@ -13,7 +13,7 @@ namespace HardwareSensorSystem.Security.Controllers
     [Route("api/roles")]
     public class RoleController : Controller
     {
-        private RoleManager<ApplicationRole> _roleManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
 
         public RoleController(RoleManager<ApplicationRole> roleManager)
         {

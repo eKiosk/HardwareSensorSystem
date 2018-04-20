@@ -13,7 +13,7 @@ namespace HardwareSensorSystem.SensorTechnology.Controllers
 {
     public class OwServerEnet2LogController : Controller
     {
-        private SensorTechnologyDbContext _context;
+        private readonly SensorTechnologyDbContext _context;
 
         public OwServerEnet2LogController(SensorTechnologyDbContext context)
         {

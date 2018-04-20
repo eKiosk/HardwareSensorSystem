@@ -193,11 +193,7 @@ namespace HardwareSensorSystem.Security.Tests
             var mockUserManager = Setup.GetUserManagerMock();
             var mockRoleManager = Setup.GetRoleManagerMock();
             var controller = new UserController(mockUserManager.Object, mockRoleManager.Object);
-            mockUserManager.Setup(userManager => userManager.FindByIdAsync(It.IsAny<string>())).ReturnsAsync((string userId) =>
-              {
-                  return new ApplicationUser() { Id = Convert.ToInt32(userId) };
-
-              });
+            mockUserManager.Setup(userManager => userManager.FindByIdAsync(It.IsAny<string>())).ReturnsAsync((string userId) => new ApplicationUser() { Id = Convert.ToInt32(userId) });
             mockUserManager.Setup(userManager => userManager.UpdateAsync(It.Is<ApplicationUser>(appUser => appUser.Id.Equals(1))))
                 .ReturnsAsync((ApplicationUser appUser) =>
                 {
@@ -228,11 +224,7 @@ namespace HardwareSensorSystem.Security.Tests
             var mockUserManager = Setup.GetUserManagerMock();
             var mockRoleManager = Setup.GetRoleManagerMock();
             var controller = new UserController(mockUserManager.Object, mockRoleManager.Object);
-            mockUserManager.Setup(userManager => userManager.FindByIdAsync(It.IsAny<string>())).ReturnsAsync((string userId) =>
-            {
-                return new ApplicationUser() { Id = Convert.ToInt32(userId) };
-
-            });
+            mockUserManager.Setup(userManager => userManager.FindByIdAsync(It.IsAny<string>())).ReturnsAsync((string userId) => new ApplicationUser() { Id = Convert.ToInt32(userId) });
             mockUserManager.Setup(userManager => userManager.UpdateAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(IdentityResult.Success);
             mockUserManager.Setup(userManager => userManager.RemovePasswordAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(IdentityResult.Success).Verifiable();
             mockUserManager.Setup(userManager => userManager.AddPasswordAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success).Verifiable();
@@ -262,11 +254,7 @@ namespace HardwareSensorSystem.Security.Tests
             var mockUserManager = Setup.GetUserManagerMock();
             var mockRoleManager = Setup.GetRoleManagerMock();
             var controller = new UserController(mockUserManager.Object, mockRoleManager.Object);
-            mockUserManager.Setup(userManager => userManager.FindByIdAsync(It.IsAny<string>())).ReturnsAsync((string userId) =>
-            {
-                return new ApplicationUser() { Id = Convert.ToInt32(userId) };
-
-            });
+            mockUserManager.Setup(userManager => userManager.FindByIdAsync(It.IsAny<string>())).ReturnsAsync((string userId) => new ApplicationUser() { Id = Convert.ToInt32(userId) });
             mockUserManager.Setup(userManager => userManager.UpdateAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(IdentityResult.Success);
             mockUserManager.Setup(userManager => userManager.GetRolesAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(userRoles.ToList());
             mockUserManager.Setup(userManager => userManager.RemoveFromRolesAsync(It.IsAny<ApplicationUser>(), It.IsAny<IEnumerable<string>>()))
@@ -343,11 +331,7 @@ namespace HardwareSensorSystem.Security.Tests
             var mockUserManager = Setup.GetUserManagerMock();
             var mockRoleManager = Setup.GetRoleManagerMock();
             var controller = new UserController(mockUserManager.Object, mockRoleManager.Object);
-            mockUserManager.Setup(userManager => userManager.FindByIdAsync(It.IsAny<string>())).ReturnsAsync((string userId) =>
-            {
-                return new ApplicationUser() { Id = Convert.ToInt32(userId) };
-
-            });
+            mockUserManager.Setup(userManager => userManager.FindByIdAsync(It.IsAny<string>())).ReturnsAsync((string userId) => new ApplicationUser() { Id = Convert.ToInt32(userId) });
             mockUserManager.Setup(userManager => userManager.UpdateAsync(It.IsAny<ApplicationUser>()))
                 .ReturnsAsync(IdentityResult.Failed()).Verifiable();
 
