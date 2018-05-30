@@ -1,5 +1,6 @@
 ﻿using HardwareSensorSystem.Security.Models;
 using IdentityServer4.AccessTokenValidation;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,19 +27,22 @@ namespace Microsoft.AspNetCore.Builder
                     options.Password.RequireUppercase = false;
                     options.Password.RequiredLength = 8;
                 })
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
 
             var rsaKey = new RsaSecurityKey(RSA.Create());
             services.AddIdentityServer()
                 .AddSigningCredential(rsaKey)
                 .AddAspNetIdentity<ApplicationUser>()
-                .AddConfigurationStore(storeOptions =>
+                .AddConfigurationStore(options =>
                 {
-                    storeOptions.ConfigureDbContext = dbContextOptionsAction;
+                    options.ConfigureDbContext = dbContextOptionsAction;
                 })
-                .AddOperationalStore(storeOptions =>
+                .AddOperationalStore(options =>
                 {
-                    storeOptions.ConfigureDbContext = dbContextOptionsAction;
+                    options.ConfigureDbContext = dbContextOptionsAction;
+                    options.EnableTokenCleanup = true;
+                    options.TokenCleanupInterval = 300;
                 });
 
             services.AddAuthentication(options =>

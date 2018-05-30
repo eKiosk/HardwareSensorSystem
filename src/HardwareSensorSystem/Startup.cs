@@ -10,12 +10,14 @@ namespace HardwareSensorSystem
 {
     public class Startup
     {
-        private readonly IConfiguration _configuration;
-
-        public Startup(IConfiguration configuration)
+        public Startup(IHostingEnvironment env, IConfiguration config)
         {
-            _configuration = configuration;
+            HostingEnvironment = env;
+            Configuration = config;
         }
+
+        private IHostingEnvironment HostingEnvironment { get; }
+        private IConfiguration Configuration { get; }
 
         /// <summary>
         /// This method add services to the container.
@@ -23,15 +25,12 @@ namespace HardwareSensorSystem
         /// <param name="services">Contract for a collection of service descriptors.</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSecuriy(_configuration, options =>
-            {
-                options.UseSqlServer(_configuration.GetValue<string>("DATABASE"), b => b.MigrationsAssembly("HardwareSensorSystem"));
-            });
+            void DbContextOptions(DbContextOptionsBuilder builder) => builder.UseSqlServer(
+                Configuration.GetValue<string>("DATABASE"), b => b.MigrationsAssembly(GetType().Assembly.FullName));
 
-            services.AddSensorTechnology(options =>
-            {
-                options.UseSqlServer(_configuration.GetValue<string>("DATABASE"), b => b.MigrationsAssembly("HardwareSensorSystem"));
-            });
+            services.AddSecuriy(Configuration, DbContextOptions);
+
+            services.AddSensorTechnology(DbContextOptions);
 
             services.AddMvc(options =>
                 {
@@ -45,12 +44,12 @@ namespace HardwareSensorSystem
         /// This method configure the HTTP request pipeline.
         /// </summary>
         /// <param name="app">Class that provides the mechanisms to configure an application's request pipeline.</param>
-        /// <param name="env">Information about the web hosting environment.</param>
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
-            if (env.IsDevelopment())
+            if (HostingEnvironment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseDatabaseErrorPage();
             }
 
             app.UseSecurity();

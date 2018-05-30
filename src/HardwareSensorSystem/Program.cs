@@ -14,8 +14,6 @@ namespace HardwareSensorSystem
 {
     public class Program
     {
-        protected Program() { }
-
         public static void Main(string[] args)
         {
             var host = BuildWebHost(args);
@@ -25,20 +23,17 @@ namespace HardwareSensorSystem
                 var services = scope.ServiceProvider;
                 var configuration = services.GetService<IConfiguration>();
 
-                if (configuration.GetValue<bool>("DATABASE_MIGRATE"))
+                try
                 {
-                    try
-                    {
-                        services.GetService<ApplicationDbContext>().Database.Migrate();
-                        services.GetService<ConfigurationDbContext>().Database.Migrate();
-                        services.GetService<PersistedGrantDbContext>().Database.Migrate();
-                        services.GetService<SensorTechnologyDbContext>().Database.Migrate();
-                    }
-                    catch (Exception ex)
-                    {
-                        var logger = services.GetRequiredService<ILogger<Program>>();
-                        logger.LogError(ex, "An error occurred migrating the database.");
-                    }
+                    services.GetService<ApplicationDbContext>().Database.Migrate();
+                    services.GetService<ConfigurationDbContext>().Database.Migrate();
+                    services.GetService<PersistedGrantDbContext>().Database.Migrate();
+                    services.GetService<SensorTechnologyDbContext>().Database.Migrate();
+                }
+                catch (Exception ex)
+                {
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occurred migrating the database.");
                 }
 
                 if (configuration.GetValue<bool>("DATABASE_SEED"))
